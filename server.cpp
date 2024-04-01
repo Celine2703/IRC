@@ -42,6 +42,11 @@ void Server::ServerSocket()
 }
 
 void Server::ServerInit() {
-	ServerSocket();
+	try {
+		ServerSocket();
+	} catch (std::runtime_error &e) {
+		std::cerr << e.what() << std::endl;
+	}
+	
 	std::cout << "Server is running on port " << Port << std::endl;
 }
