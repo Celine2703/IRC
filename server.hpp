@@ -15,13 +15,14 @@
 #include <poll.h> //-> for poll()
 #include <csignal> //-> for signal()
 #include <netinet/in.h>
+#include "client.hpp"
 
 class Server {
 public:
 	
 	Server();
 
-	void Start();
+	void Start(int port);
 	void ServerSocket();
 	void AcceptClient();
 	void ReceiveData(int fd);
@@ -37,7 +38,7 @@ private:
 	int Port;
 	int ServerSocketFd;
 	
-	std::vector<int> Clients;
+	std::vector<Client> Clients;
 	std::vector<struct pollfd> PollFds;
 
 };

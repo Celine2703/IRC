@@ -5,27 +5,106 @@
 // bool Server::ServerRunning = true;
 
 Server::Server() {
-	Port = 8080;
+	Port = 6667;
 	ServerSocketFd = -1;
 }
 
-void Server::Start() {
-	ServerSocket();
-	std::cout << "Server is running on port " << Port << std::endl;
-	AcceptClient();
-
+void Server::Start(int port) {
+	try {
+			if (port != 0) {
+			Port = port;
+		}
+		ServerSocket();
+		std::cout << "Server is running on port " << Port << std::endl;
+		std::cout << "waiting to accept a connection" << std::endl;
+		
+		while (true)
+		{
+			if((poll(&PollFds[0],PollFds.size(),-1) == -1)) //-> wait for an event
+				throw(std::runtime_error("poll() faild"));
+			
+			for (size_t i = 0; i < PollFds.size(); i++)
+			{
+				if (PollFds[i].revents & POLLIN) //-> check if the event is POLLIN
+				{
+					if (PollFds[i].fd == ServerSocketFd) //-> check if the event is from the server socket
+					{
+						AcceptClient();
+					}
+					else
+					{
+						ReceiveData(PollFds[i].fd);
+					}
+				}
+			}
+		}
+	} catch (std::runtime_error &e) {
+		std::cerr << e.what() << std::endl;
+		std::cout<< "Server is shutting down" << std::endl;
+	}
 }
 
+void Server::ReceiveData(int fd) {
+	char buffer[1024];
+	int bytes = recv(fd, buffer, sizeof(buffer), 0);
+	if (bytes == -1) {
+		throw(std::runtime_error("faild to receive data"));
+	}
+	if (bytes == 0) {
+		std::cout << "Client disconnected" << std::endl;
+		ClearClients(fd);
+		close(fd);
+	}
+	else 
+	{
+		buffer[bytes] = '\0';
+		std::cout << "Received: " << buffer << std::endl;
+		
+	}
+}
+
+void Server::ClearClients(int fd) {
+	for (size_t i = 0; i < Clients.size(); i++)
+	{
+		if (PollFds[i].fd == fd)
+		{
+			PollFds.erase(PollFds.begin() + i);
+			break;
+		}
+	}
+	for (size_t i = 0; i < Clients.size(); i++)
+	{
+		if (Clients[i].getFD() == fd)
+		{
+			Clients.erase(Clients.begin() + i);
+			break;
+		}
+	}
+}
 void Server::AcceptClient() {
 	Client NewClient;
 	struct sockaddr_in ClientAdd;
 	socklen_t addlen = sizeof(ClientAdd);
+
+	struct pollfd NewPoll;
+
 	int ClientSocketFd = accept(ServerSocketFd, (struct sockaddr *)&ClientAdd, &addlen);
 
 	if (ClientSocketFd == -1) {
 		throw(std::runtime_error("faild to accept client"));
 	}
-	
+
+	if (fcntl(ClientSocketFd, F_SETFL, O_NONBLOCK) == -1) {
+		throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
+	}
+	NewPoll.fd = ClientSocketFd;
+	NewPoll.events = POLLIN;
+	NewPoll.revents = 0;
+
+	NewClient.setFD(ClientSocketFd);
+	NewClient.setIP(inet_ntoa(ClientAdd.sin_addr));
+	this->Clients.push_back(NewClient);
+	this->PollFds.push_back(NewPoll);
 	std::cout << "Client connected" << std::endl;
 }
 
