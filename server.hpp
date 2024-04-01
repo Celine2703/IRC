@@ -4,7 +4,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <iostream>
+#include <vector> //-> for vector
+#include <sys/socket.h> //-> for socket()
+#include <sys/types.h> //-> for socket()
+#include <netinet/in.h> //-> for sockaddr_in
+#include <fcntl.h> //-> for fcntl()
+#include <unistd.h> //-> for close()
+#include <arpa/inet.h> //-> for inet_ntoa()
+#include <poll.h> //-> for poll()
+#include <csignal> //-> for signal()
 #include <netinet/in.h>
 
 class Server {
@@ -21,6 +30,7 @@ public:
 
 	void CloseFds();
 	void ClearClients(int fd);
+	void ServerInit();
 private:
 	static bool ServerRunning;
 
@@ -29,6 +39,7 @@ private:
 	
 	std::vector<int> Clients;
 	std::vector<struct pollfd> PollFds;
+
 };
 
 #endif
