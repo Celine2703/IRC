@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include <netinet/in.h>
+
 class Server {
 public:
 	
