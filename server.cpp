@@ -9,15 +9,17 @@ Server::Server() {
 	ServerSocketFd = -1;
 }
 
-void Server::Start(int port) {
+void Server::Start(std::string password, int port) {
 	try {
 			if (port != 0) {
 			Port = port;
 		}
 		ServerSocket();
-		std::cout << "Server is running on port " << Port << std::endl;
+		std::cout << "Server is running on port : " << Port << std::endl;
+		std::cout << "Server Password is : " << password << std::endl << std::endl;
 		std::cout << "waiting to accept a connection" << std::endl;
 		
+		this->password = password;
 		while (true)
 		{
 			if((poll(&PollFds[0],PollFds.size(),-1) == -1)) //-> wait for an event
@@ -44,10 +46,83 @@ void Server::Start(int port) {
 	}
 }
 
+
+std::vector<std::string> Server::tokenizationCommand(std::string& cmd)
+{
+	std::vector<std::string> vec;
+	std::istringstream stm(cmd);
+	std::string token;
+	while (std::getline(stm, token, ' '))
+	{
+		if (!token.empty()) {
+			vec.push_back(token);
+		}
+	}
+	return vec;
+}
+
+void Server::sendResponse(std::string response, int fd)
+{
+	// std::cout << "Response:\n" << response;
+	if(send(fd, response.c_str(), response.size(), 0) == -1)
+		std::cerr << "Response send() faild" << std::endl;
+}
+std::string removeNewline(std::string str) {
+    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+    return str;
+}
+
+void	Server::PASS_client(int fd, std::string cmd)
+{
+	Client *cli = GetClient(fd);
+
+	if(cmd.empty()) 
+		sendResponse(RED + ERR_NOTENOUGHPARAM(std::string("*")) + WHI, fd);
+	else if(!cli->isRegistered())
+	{
+		std::string pass = cmd;
+		if(removeNewline(pass) == password)
+		{
+			cli->setRegistered(true);
+			std::string response = GRE + std::string("YOU ARE NOW REGISTERED") + WHI + std::string(CRLF);
+			sendResponse(response, fd);
+		}
+		else
+            sendResponse(RED + ERR_INCORPASS(std::string("*")) + WHI, fd);
+	}
+	else
+        sendResponse(RED + ERR_ALREADYREGISTERED(GetClient(fd)->getNickname()) + WHI, fd);
+}
+
+void	Server::ParseCommmand(std::string cmd, int fd)
+{
+	if(cmd.empty())
+		return ;
+
+	std::vector<std::string> tokens = tokenizationCommand(cmd);
+	
+	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass"))
+	{
+		this->PASS_client(fd, tokens[1]);
+	}
+
+}
+
+std::string	Server::removeFirstBackLine(std::string str)
+{
+	size_t pos = str.find("\n");
+    if (pos != std::string::npos) {
+        str.erase(pos, 1);
+    }
+
+	return str;
+}
+
 void Server::ReceiveData(int fd) {
 	char buffer[1024];
 	int bytes = recv(fd, buffer, sizeof(buffer), 0);
-	if (bytes == -1) {
+	Client *cli = GetClient(fd);
+	if (bytes <= -1) {
 		throw(std::runtime_error("faild to receive data"));
 	}
 	if (bytes == 0) {
@@ -58,8 +133,24 @@ void Server::ReceiveData(int fd) {
 	else 
 	{
 		buffer[bytes] = '\0';
-		std::cout << "Received: " << buffer << std::endl;
-		
+
+		// on recupere la sortie client
+		cli->setBuffer((std::string)buffer);
+
+		// on regarde si c'est la fin de l'output du client (s'il a fait ctrl + d ou enter)
+		if(cli->getBuffer().find("\n") == std::string::npos)
+			return;
+
+		// s'il a fait enter alors on va s'occuper de la commande dans sa totalité 
+		std::cout << "Received in client : " << cli->getBuffer() << std::endl;
+
+		// on execute la commande
+		ParseCommmand(buffer, fd);
+
+		// laiser getClient et non la var cli car si c'est l'order Kick la var cli est null
+		if(GetClient(fd))
+			GetClient(fd)->clearBuffer();
+
 	}
 }
 
@@ -145,4 +236,13 @@ void Server::ServerInit() {
 	}
 	
 	std::cout << "Server is running on port " << Port << std::endl;
+}
+
+
+Client *Server::GetClient(int fd){
+	for (size_t i = 0; i < this->Clients.size(); i++){
+		if (this->Clients[i].getFD() == fd)
+			return &this->Clients[i];
+	}
+	return NULL;
 }
