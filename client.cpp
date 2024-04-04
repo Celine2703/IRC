@@ -1,9 +1,17 @@
 #include "client.hpp"
 
-Client::Client() {
-	Fd = -1;
-	IPAddress = "";
-}
+Client::Client()
+{
+        Fd = -1;
+        IPAddress = "";
+        nickname = "";
+        username = "";
+        registered = false;
+        login = false;
+        channelsInvite = std::vector<std::string>();
+        buffer = "";
+    }
+
 
 int Client::getFD() {
 	return Fd;

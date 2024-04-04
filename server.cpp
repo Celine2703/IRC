@@ -67,32 +67,6 @@ void Server::sendResponse(std::string response, int fd)
 	if(send(fd, response.c_str(), response.size(), 0) == -1)
 		std::cerr << "Response send() faild" << std::endl;
 }
-std::string removeNewline(std::string str) {
-    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
-    return str;
-}
-
-void	Server::PASS_client(int fd, std::string cmd)
-{
-	Client *cli = GetClient(fd);
-
-	if(cmd.empty()) 
-		sendResponse(RED + ERR_NOTENOUGHPARAM(std::string("*")) + WHI, fd);
-	else if(!cli->isRegistered())
-	{
-		std::string pass = cmd;
-		if(removeNewline(pass) == password)
-		{
-			cli->setRegistered(true);
-			std::string response = GRE + std::string("YOU ARE NOW REGISTERED") + WHI + std::string(CRLF);
-			sendResponse(response, fd);
-		}
-		else
-            sendResponse(RED + ERR_INCORPASS(std::string("*")) + WHI, fd);
-	}
-	else
-        sendResponse(RED + ERR_ALREADYREGISTERED(GetClient(fd)->getNickname()) + WHI, fd);
-}
 
 void	Server::ParseCommmand(std::string cmd, int fd)
 {
@@ -101,9 +75,10 @@ void	Server::ParseCommmand(std::string cmd, int fd)
 
 	std::vector<std::string> tokens = tokenizationCommand(cmd);
 	
-	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass"))
-	{
+	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass")) {
 		this->PASS_client(fd, tokens[1]);
+	} else if (tokens.size() && (tokens[0] == "NICK" || tokens[0] == "nick")) {
+		setClientNickname(tokens[1], fd);
 	}
 
 }

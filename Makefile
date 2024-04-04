@@ -1,4 +1,4 @@
-SRCS = irc.cpp client.cpp server.cpp
+SRCS = irc.cpp client.cpp server.cpp Authentification.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 

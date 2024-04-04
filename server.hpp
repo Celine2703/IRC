@@ -33,13 +33,11 @@ public:
 	
 	Server();
 
-	void Start(std::string password, int port);
-	void ServerSocket();
-	void AcceptClient();
-	void ReceiveData(int fd);
-
-	static void SignalHandler(int signal);
-
+	void						Start(std::string password, int port);
+	void						ServerSocket();
+	void						AcceptClient();
+	void						ReceiveData(int fd);
+	static void					SignalHandler(int signal);
 	void						CloseFds();
 	void						ClearClients(int fd);
 	void						ServerInit();
@@ -49,6 +47,9 @@ public:
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
 	void						PASS_client(int fd, std::string cmd);
 	void						sendResponse(std::string response, int fd);
+	void						setClientNickname(std::string cmd, int fd);
+	bool						is_validNickname(std::string& nickname);
+	bool						nicknameAlreadyUseByClient(std::string& nickname);
 
 private:
 	static bool ServerRunning;

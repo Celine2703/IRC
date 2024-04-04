@@ -13,6 +13,7 @@ private:
 	std::string nickname;
 	std::string username;
 	bool registered;
+	bool login;
 	std::vector<std::string> channelsInvite;
 	std::string buffer;
 
