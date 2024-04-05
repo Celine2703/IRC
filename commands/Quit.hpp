@@ -3,26 +3,32 @@
 
 #include "../command.hpp"
 
-class Quit : public Commands {
+class Quit : public Commands
+{
 public:
-    Quit() {
+    Quit()
+    {
         // Constructor implementation
     }
 
-    ~Quit() {
+    ~Quit()
+    {
         // Destructor implementation
     }
 
-    Quit(const Quit& other) {
+    Quit(const Quit &other)
+    {
         // Copy constructor implementation
     }
 
-    Quit& operator=(const Quit& other) {
+    Quit &operator=(const Quit &other)
+    {
         // Copy assignment operator implementation
         return *this;
     }
 
-    void execute() {
+    void execute()
+    {
         // execute() function implementation
     }
 };

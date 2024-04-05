@@ -8,14 +8,14 @@
 class Client {
 
 private:
-	int Fd;
-	std::string IPAddress;
-	std::string nickname;
-	std::string username;
-	bool registered;
-	bool login;
-	std::vector<std::string> channelsInvite;
-	std::string buffer;
+	int							Fd;
+	std::string					IPAddress;
+	std::string					nickname;
+	std::string					username;
+	bool						registered;
+	bool						login;
+	std::vector<std::string>	channelsInvite;
+	std::string					buffer;
 
 public:
 	Client();

@@ -19,7 +19,7 @@ void Server::Start(std::string password, int port)
 			Port = port;
 		}
 		ServerSocket();
-		std::cout << "Server is running on port : " << YEL <<  Port << WHI << std::endl;
+		std::cout << "Server is running on port : " << YEL << Port << WHI << std::endl;
 		std::cout << "Server Password is : " << YEL << password << WHI << std::endl
 				  << std::endl;
 		std::cout << "waiting to accept a connection" << std::endl;
