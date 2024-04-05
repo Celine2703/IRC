@@ -50,16 +50,17 @@ public:
 	void						setClientNickname(std::string cmd, int fd);
 	bool						is_validNickname(std::string& nickname);
 	bool						nicknameAlreadyUseByClient(std::string& nickname);
+	void						setClientUsername(std::string cmd, int fd);
 
 private:
-	static bool ServerRunning;
+	static bool					ServerRunning;
 
-	int Port;
-	int ServerSocketFd;
+	int							Port;
+	int							ServerSocketFd;
 
-	std::string password;
-	std::vector<Client> Clients;
-	std::vector<struct pollfd> PollFds;
+	std::string					password;
+	std::vector<Client>			Clients;
+	std::vector<struct pollfd>	PollFds;
 	
 
 };

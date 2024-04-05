@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     // }
     (void)argc;
     (void)argv;
-    std::cout << std::endl << "*** SERVER *** " << std::endl;
+    std::cout << std::endl << GRE << "*** SERVER *** \n" << WHI << std::endl;
     std::string password = "password0901"; // normalement donner par l'user  argv[2]
     const char *port = "6667"; // normalement donner par l'user  argv[1]
     Server s;

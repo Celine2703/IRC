@@ -1,4 +1,12 @@
-SRCS = irc.cpp client.cpp server.cpp Authentification.cpp
+SRCS = irc.cpp client.cpp server.cpp \
+\
+./commands/Nick.cpp \
+\
+./commands/Pass.cpp \
+\
+./commands/User.cpp \
+
+
 
 OBJS = $(SRCS:.cpp=.o)
 
