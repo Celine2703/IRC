@@ -16,19 +16,17 @@ void Server::PASS_client(int fd, std::string cmd)
 	Client *cli = GetClient(fd);
 
 	if (cmd.empty())
-		sendResponse(RED + ERR_NOTENOUGHPARAM(std::string("*")) + WHI, fd);
+		sendResponse(ERR_NOTENOUGHPARAM(std::string("*")), fd);
 	else if (!cli->isRegistered())
 	{
 		std::string pass = cmd;
 		if (removeNewline2(pass) == password)
 		{
 			cli->setRegistered(true);
-			std::string response = GRE + std::string("YOU ARE NOW REGISTERED") + WHI + std::string(CRLF);
-			sendResponse(response, fd);
 		}
 		else
-			sendResponse(RED + ERR_INCORPASS(std::string("*")) + WHI, fd);
+			sendResponse(ERR_INCORPASS(std::string("*")), fd);
 	}
 	else
-		sendResponse(RED + ERR_ALREADYREGISTERED(GetClient(fd)->getNickname()) + WHI, fd);
+		sendResponse(ERR_ALREADYREGISTERED(GetClient(fd)->getNickname()), fd);
 }

@@ -5,6 +5,9 @@ SRCS = irc.cpp client.cpp server.cpp \
 ./commands/Pass.cpp \
 \
 ./commands/User.cpp \
+\
+./commands/Join.cpp \
+\
 
 
 

@@ -67,11 +67,10 @@ void Server::setClientNickname(std::string cmd, int fd)
 				if (oldnick == "*" && !cli->getUsername().empty())
 				{
 					// cli->setLogedin(true);
-					sendResponse(GRE + RPL_CONNECTED(cli->getNickname()) + WHI, fd);
-					sendResponse(GRE + RPL_NICKCHANGE(cli->getNickname(), cmd) + WHI, fd);
+					sendResponse(RPL_NICKCHANGE(cli->getNickname(), cmd), fd);
 				}
 				else
-					sendResponse(GRE + RPL_NICKCHANGE(oldnick, cmd) + WHI, fd);
+					sendResponse(RPL_NICKCHANGE(oldnick, cmd), fd);
 				return;
 			}
 		}
@@ -82,6 +81,6 @@ void Server::setClientNickname(std::string cmd, int fd)
 	if (cli && cli->isRegistered() && !cli->getNickname().empty() && !cli->getNickname().empty() && cli->getNickname() != "*")
 	{
 		// cli->setLogedin(true);
-		sendResponse(GRE + RPL_CONNECTED(cli->getNickname()) + WHI, fd);
+		sendResponse(RPL_CONNECTED(cli->getNickname()), fd);
 	}
 }

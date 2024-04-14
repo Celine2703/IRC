@@ -75,7 +75,7 @@ void Server::sendResponse(std::string response, int fd)
 		std::cerr << "Response send() faild" << std::endl;
 }
 
-void Server::ParseCommmand(std::string cmd, int fd)
+void Server::ParseCommand(std::string cmd, int fd)
 {
 	if (cmd.empty())
 		return;
@@ -99,6 +99,10 @@ void Server::ParseCommmand(std::string cmd, int fd)
 	else if (tokens.size() && (tokens[0] == "USER" || tokens[0] == "user"))
 	{
 		setClientUsername(tokens[1], fd);
+	}
+	else if (tokens.size() && (tokens[0] == "JOIN" || tokens[0] == "join"))
+	{
+		JOIN_client(cmd, fd);
 	}
 }
 
@@ -149,14 +153,13 @@ void Server::ReceiveData(int fd)
 		{
 			// on execute la commande
 			std::cout << "Execute commande : " << line << std::endl;
-			ParseCommmand(line, fd);
+			ParseCommand(line, fd);
 		}
 
 		// laiser getClient et non la var cli car si c'est l'order Kick la var cli est null
 		if (GetClient(fd))
 		{
 			GetClient(fd)->clearBuffer();
-			sendResponse("$>", GetClient(fd)->getFD());
 		}
 	}
 }
@@ -208,7 +211,6 @@ void Server::AcceptClient()
 	this->Clients.push_back(NewClient);
 	this->PollFds.push_back(NewPoll);
 	std::cout << "Client connected" << std::endl;
-	sendResponse("$>", NewClient.getFD());
 }
 
 void Server::ServerSocket()

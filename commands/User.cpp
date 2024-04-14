@@ -22,11 +22,10 @@ void Server::setClientUsername(std::string cmd, int fd)
 	else
 	{
 		cli->setUsername(cmd);
-		sendResponse(GRE + std::string("YOU'RE USERNAME IS SET.\n") + WHI, fd);
 	}
 	if (cli && cli->isRegistered() && !cli->getUsername().empty() && !cli->getNickname().empty() && cli->getNickname() != "*") // && !cli->GetLogedIn()
 	{
 		// cli->setLogedin(true);
-		sendResponse(GRE + RPL_CONNECTED(cli->getNickname()) + WHI, fd);
+		sendResponse(RPL_CONNECTED(cli->getNickname()), fd);
 	}
 }

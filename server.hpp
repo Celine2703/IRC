@@ -41,16 +41,18 @@ public:
 	void						CloseFds();
 	void						ClearClients(int fd);
 	void						ServerInit();
-	void						ParseCommmand(std::string cmd, int fd);
+	void						ParseCommand(std::string cmd, int fd);
 	Client						*GetClient(int fd);
 	std::string					removeFirstBackLine(std::string);
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
 	void						PASS_client(int fd, std::string cmd);
+	void						JOIN_client(std::string cmd, int fd);
 	void						sendResponse(std::string response, int fd);
 	void						setClientNickname(std::string cmd, int fd);
 	bool						is_validNickname(std::string& nickname);
 	bool						nicknameAlreadyUseByClient(std::string& nickname);
 	void						setClientUsername(std::string cmd, int fd);
+	int 						tokenizationJoin(std::vector< std::pair <std::string, std::string> > &token, std::string cmd, int fd);
 
 private:
 	static bool					ServerRunning;

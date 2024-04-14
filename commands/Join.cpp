@@ -1,73 +1,92 @@
-// #include "../server.hpp"
-// #include <poll.h>
-// #include <signal.h>
-// #include "../client.hpp"
+#include "../server.hpp"
+#include <poll.h>
+#include <signal.h>
+#include "../client.hpp"
 
-// int Server::SplitJoin(std::vector<std::pair<std::string, std::string>> &token, std::string cmd, int fd)
-// {
-//     std::vector<std::string> tmp;
-//     std::string ChStr, PassStr, buff;
-//     std::istringstream iss(cmd);
-//     while (iss >> cmd)
-//         tmp.push_back(cmd);
-//     if (tmp.size() < 2)
-//     {
-//         token.clear();
-//         return 0;
-//     }
-//     tmp.erase(tmp.begin());
-//     ChStr = tmp[0];
-//     tmp.erase(tmp.begin());
-//     if (!tmp.empty())
-//     {
-//         PassStr = tmp[0];
-//         tmp.clear();
-//     }
-//     for (size_t i = 0; i < ChStr.size(); i++)
-//     {
-//         if (ChStr[i] == ',')
-//         {
-//             token.push_back(std::make_pair(buff, ""));
-//             buff.clear();
-//         }
-//         else
-//             buff += ChStr[i];
-//     }
-//     token.push_back(std::make_pair(buff, ""));
-//     if (!PassStr.empty())
-//     {
-//         size_t j = 0;
-//         buff.clear();
-//         for (size_t i = 0; i < PassStr.size(); i++)
-//         {
-//             if (PassStr[i] == ',')
-//             {
-//                 token[j].second = buff;
-//                 j++;
-//                 buff.clear();
-//             }
-//             else
-//                 buff += PassStr[i];
-//         }
-//         token[j].second = buff;
-//     }
-//     for (size_t i = 0; i < token.size(); i++) // erase the empty channel names
-//     {
-//         if (token[i].first.empty())
-//             token.erase(token.begin() + i--);
-//     }
-//     for (size_t i = 0; i < token.size(); i++)
-//     { // ERR_NOSUCHCHANNEL (403) // if the channel doesn't exist
-//         if (*(token[i].first.begin()) != '#')
-//         {
-//             senderror(403, GetClient(fd)->GetNickName(), token[i].first, GetClient(fd)->GetFd(), " :No such channel\r\n");
-//             token.erase(token.begin() + i--);
-//         }
-//         else
-//             token[i].first.erase(token[i].first.begin());
-//     }
-//     return 1;
-// }
+int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &token, std::string cmd, int fd)
+{
+    std::vector<std::string>    tmp;
+    std::string                 channelName, PassChannel, buff;
+    std::istringstream          iss(cmd);
+    
+    // Extraction des tokens de la commande et stockage dans le vecteur temporaire
+    while (iss >> cmd)
+        tmp.push_back(cmd);
+    
+    // Vérification de la taille des tokens et nettoyage du vecteur de tokens si nécessaire
+    if (tmp.size() < 2)
+    {
+        token.clear();
+        return 0;
+    }
+    
+    // Traitement des tokens pour extraire le nom de canal et le mot de passe
+    tmp.erase(tmp.begin());
+    channelName = tmp[0];
+    tmp.erase(tmp.begin());
+    if (!tmp.empty())
+    {
+        PassChannel = tmp[0];
+        tmp.clear();
+    }
+    
+    // Tokenisation du nom de canal
+    for (size_t i = 0; i < channelName.size(); i++)
+    {
+        if (channelName[i] == ',')
+        {
+            token.push_back(std::make_pair(buff, ""));
+            buff.clear();
+        }
+        else
+            buff += channelName[i];
+    }
+    token.push_back(std::make_pair(buff, ""));
+    
+    // Tokenisation du mot de passe s'il existe
+    if (!PassChannel.empty())
+    {
+        size_t j = 0;
+        buff.clear();
+        for (size_t i = 0; i < PassChannel.size(); i++)
+        {
+            if (PassChannel[i] == ',')
+            {
+                token[j].second = buff;
+                j++;
+                buff.clear();
+            }
+            else
+                buff += PassChannel[i];
+        }
+        token[j].second = buff;
+    }
+    
+    // Suppression des noms de canal vides du vecteur de tokens
+    for (size_t i = 0; i < token.size(); i++)
+    {
+        if (token[i].first.empty())
+            token.erase(token.begin() + i--);
+    }
+    
+    // Vérification et traitement des noms de canal invalides
+    for (size_t i = 0; i < token.size(); i++)
+    {
+        if (*(token[i].first.begin()) != '#')
+        {
+            // Envoi d'une réponse d'erreur si le nom de canal est invalide
+            // il faut créer un channel quand ce dernier nexiste oas 
+            sendResponse("403 " +  GetClient(fd)->getNickname() + " " +  token[i].first + " :No such channel\r\n", GetClient(fd)->getFD());
+            token.erase(token.begin() + i--);
+        }
+        else
+            token[i].first.erase(token[i].first.begin());
+    }
+    
+    // Retourne 1 pour indiquer le succès de la tokenisation
+    return 1;
+}
+
 
 // int Server::SearchForClients(std::string nickname)
 // {
@@ -157,33 +176,52 @@
 //                   fd);
 // }
 
-// void Server::JOIN(std::string cmd, int fd)
-// {
-//     std::vector<std::pair<std::string, std::string>> token;
-//     // SplitJoin(token, cmd, fd);
-//     if (!SplitJoin(token, cmd, fd)) // ERR_NEEDMOREPARAMS (461) // if the channel name is empty
-//     {
-//         senderror(461, GetClient(fd)->GetNickName(), GetClient(fd)->GetFd(), " :Not enough parameters\r\n");
-//         return;
-//     }
-//     if (token.size() > 10) // ERR_TOOMANYTARGETS (407) // if more than 10 Channels
-//     {
-//         senderror(407, GetClient(fd)->GetNickName(), GetClient(fd)->GetFd(), " :Too many channels\r\n");
-//         return;
-//     }
-//     for (size_t i = 0; i < token.size(); i++)
-//     {
-//         bool flag = false;
-//         for (size_t j = 0; j < this->channels.size(); j++)
-//         {
-//             if (this->channels[j].GetName() == token[i].first)
-//             {
-//                 ExistCh(token, i, j, fd);
-//                 flag = true;
-//                 break;
-//             }
-//         }
-//         if (!flag)
-//             NotExistCh(token, i, fd);
-//     }
-// }
+void displayVector(const std::vector<std::pair<std::string, std::string> >& token)
+{
+    typedef std::vector<std::pair<std::string, std::string> >::const_iterator Iterator;
+
+    for (Iterator it = token.begin(); it != token.end(); ++it)
+    {
+        std::cout << "First element: " << it->first << ", Second element: " << it->second << std::endl;
+    }
+}
+
+
+void Server::JOIN_client(std::string cmd, int fd)
+{
+    (void)fd;
+
+    std::cout << "JOIN : " << cmd << std::endl;
+
+    std::vector<std::pair<std::string, std::string> > token;
+
+
+    tokenizationJoin(token, cmd, fd);
+
+    displayVector(token);
+    // if (!SplitJoin(token, cmd, fd)) // ERR_NEEDMOREPARAMS (461) // if the channel name is empty
+    // {
+    //     senderror(461, GetClient(fd)->GetNickName(), GetClient(fd)->GetFd(), " :Not enough parameters\r\n");
+    //     return;
+    // }
+    // if (token.size() > 10) // ERR_TOOMANYTARGETS (407) // if more than 10 Channels
+    // {
+    //     senderror(407, GetClient(fd)->GetNickName(), GetClient(fd)->GetFd(), " :Too many channels\r\n");
+    //     return;
+    // }
+    // for (size_t i = 0; i < token.size(); i++)
+    // {
+    //     bool flag = false;
+    //     for (size_t j = 0; j < this->channels.size(); j++)
+    //     {
+    //         if (this->channels[j].GetName() == token[i].first)
+    //         {
+    //             ExistCh(token, i, j, fd);
+    //             flag = true;
+    //             break;
+    //         }
+    //     }
+    //     if (!flag)
+    //         NotExistCh(token, i, fd);
+    // }
+}
