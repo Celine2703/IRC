@@ -6,12 +6,13 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:08 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:35:20 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 22:47:50 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
+// Recherche une commande spécifique et extrait la chaîne suivante
 void FindQ(std::string cmd, std::string tofind, std::string &str)
 {
     size_t i = 0;
@@ -36,6 +37,7 @@ void FindQ(std::string cmd, std::string tofind, std::string &str)
     str = str.substr(i);
 }
 
+// Divise une commande et retourne la raison formatée pour quitter
 std::string SplitQuit(std::string cmd)
 {
     std::istringstream stm(cmd);
@@ -59,6 +61,7 @@ std::string SplitQuit(std::string cmd)
     return reason;
 }
 
+// Supprime un file descriptor de la liste de polling
 void Server::RemoveFds(int fd)
 {
     for (size_t i = 0; i < this->PollFds.size(); i++)
@@ -71,6 +74,7 @@ void Server::RemoveFds(int fd)
     }
 }
 
+// Supprime un client de la liste des clients
 void Server::RemoveClient(int fd)
 {
     for (size_t i = 0; i < this->Clients.size(); i++)
@@ -83,6 +87,7 @@ void Server::RemoveClient(int fd)
     }
 }
 
+// Supprime un client des canaux et gère les notifications
 void Server::RmChannels(int fd)
 {
     for (size_t i = 0; i < this->channels.size(); i++)
@@ -112,38 +117,61 @@ void Server::RmChannels(int fd)
     }
 }
 
-void Server::QUIT(std::string cmd, int fd)
+// Extraire la raison du QUIT à partir de la commande.
+std::string Server::ExtractQuitReason(std::string cmd)
 {
-    std::string reason;
-    reason = SplitQuit(cmd);
-    for (size_t i = 0; i < channels.size(); i++)
+    return SplitQuit(cmd);
+}
+
+// Gérer la suppression du client des canaux et l'envoi des notifications.
+void Server::ProcessChannelParticipation(int fd, const std::string &reason)
+{
+    for (size_t i = 0; i < channels.size();)
     {
-        if (channels[i].get_Client(fd))
+        bool isClient = channels[i].get_Client(fd);
+        bool isAdmin = channels[i].get_admin(fd);
+
+        if (isClient || isAdmin)
         {
             channels[i].remove_Client(fd);
             if (channels[i].GetClientsNumber() == 0)
+            {
                 channels.erase(channels.begin() + i);
+            }
             else
             {
                 std::string rpl = ":" + GetClient(fd)->getNickname() + "!~" + GetClient(fd)->getUsername() + "@localhost QUIT " + reason + "\r\n";
                 channels[i].sendTo_all(rpl);
+                i++;
             }
         }
-        else if (channels[i].get_admin(fd))
+        else
         {
-            channels[i].remove_admin(fd);
-            if (channels[i].GetClientsNumber() == 0)
-                channels.erase(channels.begin() + i);
-            else
-            {
-                std::string rpl = ":" + GetClient(fd)->getNickname() + "!~" + GetClient(fd)->getUsername() + "@localhost QUIT " + reason + "\r\n";
-                channels[i].sendTo_all(rpl);
-            }
+            i++;
         }
     }
+}
+
+// Afficher une notification de déconnexion du client sur le serveur.
+void Server::NotifyDisconnection(int fd)
+{
     std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
+}
+
+// Nettoyer toutes les ressources associées au client.
+void Server::CleanupResources(int fd)
+{
     RmChannels(fd);
     RemoveClient(fd);
     RemoveFds(fd);
     close(fd);
+}
+
+// Méthode principale qui utilise les sous-méthodes pour traiter la commande QUIT.
+void Server::QUIT(std::string cmd, int fd)
+{
+    std::string reason = ExtractQuitReason(cmd);
+    ProcessChannelParticipation(fd, reason);
+    NotifyDisconnection(fd);
+    CleanupResources(fd);
 }

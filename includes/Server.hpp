@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:35:25 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 22:48:28 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,10 @@ public:
 	void						RemoveFds(int fd);
 	void						RemoveClient(int fd);
 	void						RmChannels(int fd);
-	
+	std::string					ExtractQuitReason(std::string cmd);
+	void						ProcessChannelParticipation(int fd, const std::string& reason);
+	void						NotifyDisconnection(int fd);
+	void						CleanupResources(int fd);
 
 };
 
