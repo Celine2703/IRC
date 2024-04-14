@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 18:44:46 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,10 @@ void Server::ParseCommand(std::string cmd, int fd)
 	else if (tokens.size() && (tokens[0] == "PRIVMSG" || tokens[0] == "privmsg"))
 	{
 		PRIVMSG(cmd, fd);
+	}
+	else if (tokens.size() && (tokens[0] == "topic" || tokens[0] == "TOPIC"))
+	{
+		TOPIC(cmd, fd);
 	}
 	
 }

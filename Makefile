@@ -6,11 +6,13 @@
 #    By: ranki <ranki@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/14 17:51:10 by ranki             #+#    #+#              #
-#    Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr        #
+#    Updated: 2024/04/14 18:46:09 by ranki            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRC_DIR = ./src/
+
+CMD_DIR = ./commands/
 
 SRCS = main.cpp\
 \
@@ -28,15 +30,17 @@ $(SRC_DIR)ManageCommand.cpp\
 \
 $(SRC_DIR)CommunicationClient.cpp\
 \
-./commands/Nick.cpp\
+$(CMD_DIR)Nick.cpp\
 \
-./commands/Pass.cpp\
+$(CMD_DIR)Pass.cpp\
 \
-./commands/User.cpp\
+$(CMD_DIR)User.cpp\
 \
-./commands/Join.cpp\
+$(CMD_DIR)Join.cpp\
 \
-./commands/PrivateMessage.cpp\
+$(CMD_DIR)PrivateMessage.cpp\
+\
+$(CMD_DIR)Topic.cpp\
 \
 
 

@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:55:18 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 18:44:18 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,11 @@ public:
 	void						PRIVMSG(std::string cmd, int fd);
 	Channel						*GetChannel(std::string name);
 	Client						*GetClientNick(std::string nickname);
+	std::string					tTopic();
+	std::string					gettopic(std::string &input);
+	int							getpos(std::string &cmd);
+	void						TOPIC(std::string &cmd, int &fd);
+
 private:
 	static bool					ServerRunning;
 
