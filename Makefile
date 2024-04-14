@@ -1,14 +1,30 @@
-SRCS = irc.cpp client.cpp server.cpp Channel.cpp ManageChannel.cpp ManageClient.cpp\
+SRC_DIR = ./src/
+
+SRCS = main.cpp\
 \
-./commands/Nick.cpp \
+$(SRC_DIR)client.cpp\
 \
-./commands/Pass.cpp \
+./src/server.cpp\
 \
-./commands/User.cpp \
+$(SRC_DIR)Channel.cpp\
 \
-./commands/Join.cpp \
+$(SRC_DIR)ManageChannel.cpp\
 \
-./commands/PrivateMessage.cpp \
+$(SRC_DIR)ManageClient.cpp\
+\
+$(SRC_DIR)ManageCommand.cpp\
+\
+$(SRC_DIR)CommunicationClient.cpp\
+\
+./commands/Nick.cpp\
+\
+./commands/Pass.cpp\
+\
+./commands/User.cpp\
+\
+./commands/Join.cpp\
+\
+./commands/PrivateMessage.cpp\
 \
 
 

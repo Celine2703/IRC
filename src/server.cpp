@@ -53,63 +53,6 @@ void Server::Start(std::string password, int port)
 	}
 }
 
-std::vector<std::string> Server::tokenizationCommand(std::string &cmd)
-{
-	std::vector<std::string> vec;
-	std::istringstream stm(cmd);
-	std::string token;
-	while (std::getline(stm, token, ' '))
-	{
-		if (!token.empty())
-		{
-			vec.push_back(token);
-		}
-	}
-	return vec;
-}
-
-void Server::sendResponse(std::string response, int fd)
-{
-	// std::cout << "Response:\n" << response;
-	if (send(fd, response.c_str(), response.size(), 0) == -1)
-		std::cerr << "Response send() faild" << std::endl;
-}
-
-void Server::ParseCommand(std::string cmd, int fd)
-{
-	if (cmd.empty())
-		return;
-
-	if (cmd == "CAP LS" && GetClient(fd)->isFirstMessage())
-	{
-		GetClient(fd)->setFirstMessage(false);
-		return;
-	}
-
-	std::vector<std::string> tokens = tokenizationCommand(cmd);
-
-	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass"))
-	{
-		this->PASS_client(fd, tokens[1]);
-	}
-	else if (tokens.size() && (tokens[0] == "NICK" || tokens[0] == "nick"))
-	{
-		setClientNickname(tokens[1], fd);
-	}
-	else if (tokens.size() && (tokens[0] == "USER" || tokens[0] == "user"))
-	{
-		setClientUsername(tokens[1], fd);
-	}
-	else if (tokens.size() && (tokens[0] == "JOIN" || tokens[0] == "join"))
-	{
-		JOIN_client(cmd, fd);
-	}
-	else if (tokens.size() && (tokens[0] == "PRIVMSG" || tokens[0] == "privmsg"))
-	{
-		PRIVMSG(cmd, fd);
-	}
-	
-}
 
 std::string Server::removeFirstBackLine(std::string str)
 {
@@ -122,72 +65,6 @@ std::string Server::removeFirstBackLine(std::string str)
 	return str;
 }
 
-void Server::ReceiveData(int fd)
-{
-	char buffer[1024];
-	int bytes = recv(fd, buffer, sizeof(buffer), 0);
-	Client *cli = GetClient(fd);
-	if (bytes <= -1)
-	{
-		throw(std::runtime_error("faild to receive data"));
-	}
-	if (bytes == 0)
-	{
-		std::cout << "Client disconnected" << std::endl;
-		ClearClients(fd);
-		close(fd);
-	}
-	else
-	{
-		buffer[bytes] = '\0';
-
-		// on recupere la sortie client
-		cli->setBuffer((std::string)buffer);
-
-		// on regarde si c'est la fin de l'output du client (s'il a fait ctrl + d ou enter)
-		if (cli->getBuffer().find("\n") == std::string::npos)
-			return;
-
-		// s'il a fait enter alors on va s'occuper de la commande dans sa totalité
-		std::cout << "Received in client : " << cli->getBuffer() << std::endl;
-
-		//on va d'abord split la commandee en "/n"
-		std::istringstream iss(buffer);
-    	std::string line;
-		while (std::getline(iss, line))
-		{
-			// on execute la commande
-			std::cout << "Execute commande : " << line << std::endl;
-			ParseCommand(line, fd);
-		}
-
-		// laiser getClient et non la var cli car si c'est l'order Kick la var cli est null
-		if (GetClient(fd))
-		{
-			GetClient(fd)->clearBuffer();
-		}
-	}
-}
-
-void Server::ClearClients(int fd)
-{
-	for (size_t i = 0; i < Clients.size(); i++)
-	{
-		if (PollFds[i].fd == fd)
-		{
-			PollFds.erase(PollFds.begin() + i);
-			break;
-		}
-	}
-	for (size_t i = 0; i < Clients.size(); i++)
-	{
-		if (Clients[i].getFD() == fd)
-		{
-			Clients.erase(Clients.begin() + i);
-			break;
-		}
-	}
-}
 void Server::AcceptClient()
 {
 	Client NewClient;
@@ -259,14 +136,4 @@ void Server::ServerInit()
 	}
 
 	std::cout << "Server is running on port " << Port << std::endl;
-}
-
-Client *Server::GetClient(int fd)
-{
-	for (size_t i = 0; i < this->Clients.size(); i++)
-	{
-		if (this->Clients[i].getFD() == fd)
-			return &this->Clients[i];
-	}
-	return NULL;
 }
