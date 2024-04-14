@@ -6,7 +6,7 @@
 #    By: ranki <ranki@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/14 17:51:10 by ranki             #+#    #+#              #
-#    Updated: 2024/04/14 20:34:58 by ranki            ###   ########.fr        #
+#    Updated: 2024/04/14 22:05:58 by ranki            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,11 @@ CMD_DIR = ./commands/
 
 SRCS = main.cpp\
 \
+\
+\
 $(SRC_DIR)Client.cpp\
 \
-./src/Server.cpp\
+$(SRC_DIR)Server.cpp\
 \
 $(SRC_DIR)Channel.cpp\
 \
@@ -29,6 +31,8 @@ $(SRC_DIR)ManageClient.cpp\
 $(SRC_DIR)ManageCommand.cpp\
 \
 $(SRC_DIR)CommunicationClient.cpp\
+\
+\
 \
 $(CMD_DIR)Nick.cpp\
 \
@@ -43,6 +47,8 @@ $(CMD_DIR)PrivateMessage.cpp\
 $(CMD_DIR)Topic.cpp\
 \
 $(CMD_DIR)Kick.cpp\
+\
+$(CMD_DIR)Part.cpp\
 \
 
 

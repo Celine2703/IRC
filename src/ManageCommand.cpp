@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 20:34:40 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 22:00:51 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,10 @@ void Server::ParseCommand(std::string cmd, int fd)
 	else if (tokens.size() && (tokens[0] == "KICK" || tokens[0] == "kick"))
 	{
 		KICK(cmd, fd);
+	}
+	else if (tokens.size() && (tokens[0] == "PART" || tokens[0] == "part"))
+	{
+		PART(cmd, fd);
 	}
 }
 

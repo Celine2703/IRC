@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 21:04:12 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 22:13:01 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,11 @@ public:
     void						SplitChannelNames(const std::string& str, std::vector<std::string>& tmp);
 	bool						CheckParameters(const std::string& user, int fd);
     void						ProcessKickForChannel(const std::string& user, const std::string& reason, std::vector<std::string>& tmp, int fd);
+	void						PART(std::string cmd, int fd);
+	void						CleanChannels(std::vector<std::string> &channels, int fd);
+	void						NormalizeReason(std::string &reason);
+	int							SplitCmdPart(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
+	void 						ExtractChannels(std::string &str, std::vector<std::string> &channels);
 
 
 private:
