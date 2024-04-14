@@ -104,6 +104,11 @@ void Server::ParseCommand(std::string cmd, int fd)
 	{
 		JOIN_client(cmd, fd);
 	}
+	else if (tokens.size() && (tokens[0] == "PRIVMSG" || tokens[0] == "privmsg"))
+	{
+		PRIVMSG(cmd, fd);
+	}
+	
 }
 
 std::string Server::removeFirstBackLine(std::string str)

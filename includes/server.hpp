@@ -62,7 +62,10 @@ public:
 	void						ExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd);
 	int							SearchForClients(std::string nickname);
 	void						NotExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int fd);
-
+	void						CheckForChannels_Clients(std::vector<std::string> &tmp, int fd);
+	void						PRIVMSG(std::string cmd, int fd);
+	Channel						*GetChannel(std::string name);
+	Client						*GetClientNick(std::string nickname);
 private:
 	static bool					ServerRunning;
 

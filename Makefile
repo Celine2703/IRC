@@ -1,4 +1,4 @@
-SRCS = irc.cpp client.cpp server.cpp Channel.cpp\
+SRCS = irc.cpp client.cpp server.cpp Channel.cpp ManageChannel.cpp ManageClient.cpp\
 \
 ./commands/Nick.cpp \
 \
@@ -7,6 +7,8 @@ SRCS = irc.cpp client.cpp server.cpp Channel.cpp\
 ./commands/User.cpp \
 \
 ./commands/Join.cpp \
+\
+./commands/PrivateMessage.cpp \
 \
 
 
