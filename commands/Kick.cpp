@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 20:25:45 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 20:28:26 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 20:58:37 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,57 +49,77 @@ std::string SplitCmdK(std::string &cmd, std::vector<std::string> &tmp)
     return reason;
 }
 
-std::string Server::SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd)
+std::string Server::ExtractReason(std::string& reason)
 {
-    std::string reason = SplitCmdK(cmd, tmp);
-    if (tmp.size() < 3) // check if the client send the channel name and the client to kick
-        return std::string("");
-    tmp.erase(tmp.begin());
-    std::string str = tmp[0];
-    std::string str1;
-    user = tmp[1];
-    tmp.clear();
-    for (size_t i = 0; i < str.size(); i++)
-    { // split the first string by ',' to get the channels names
-        if (str[i] == ',')
-        {
-            tmp.push_back(str1);
-            str1.clear();
-        }
-        else
-            str1 += str[i];
+    if (reason[0] == ':')
+    {
+        reason.erase(reason.begin());
     }
-    tmp.push_back(str1);
-    for (size_t i = 0; i < tmp.size(); i++) // erase the empty strings
+    else
+    {
+        size_t pos = reason.find(' ');
+        if (pos != std::string::npos)
+            reason = reason.substr(0, pos);
+    }
+    return reason;
+}
+
+void Server::CleanChannelNames(std::vector<std::string>& tmp, int fd)
+{
+    for (size_t i = 0; i < tmp.size(); i++)
     {
         if (tmp[i].empty())
-            tmp.erase(tmp.begin() + i--);
-    }
-    if (reason[0] == ':')
-        reason.erase(reason.begin());
-    else // shrink to the first space
-    {
-        for (size_t i = 0; i < reason.size(); i++)
         {
-            if (reason[i] == ' ')
-            {
-                reason = reason.substr(0, i);
-                break;
-            }
+            tmp.erase(tmp.begin() + i--);
         }
-    }
-    for (size_t i = 0; i < tmp.size(); i++)
-    { // erase the '#' from the channel name and check if the channel valid
-        if (*(tmp[i].begin()) == '#')
+        else if (*(tmp[i].begin()) == '#')
+        {
             tmp[i].erase(tmp[i].begin());
+        }
         else
         {
             senderror(403, GetClient(fd)->getNickname(), tmp[i], GetClient(fd)->getFD(), " :No such channel\r\n");
             tmp.erase(tmp.begin() + i--);
         }
     }
-    return reason;
 }
+
+void Server::SplitChannelNames(const std::string& str, std::vector<std::string>& tmp)
+{
+    std::string str1;
+    for (size_t i = 0; i < str.size(); i++)
+    {
+        if (str[i] == ',')
+        {
+            tmp.push_back(str1);
+            str1.clear();
+        }
+        else
+        {
+            str1 += str[i];
+        }
+    }
+    tmp.push_back(str1);
+}
+
+std::string Server::SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd)
+{
+        std::string reason = SplitCmdK(cmd, tmp);
+
+        if (tmp.size() < 3)
+            return std::string("");
+
+        tmp.erase(tmp.begin());
+        std::string str = tmp[0];
+        user = tmp[1];
+        tmp.clear();
+
+        SplitChannelNames(str, tmp);
+        CleanChannelNames(tmp, fd);
+        reason = ExtractReason(reason);
+
+        return reason;
+    }
 
 void Server::KICK(std::string cmd, int fd)
 {

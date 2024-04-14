@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 20:27:25 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 20:58:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,10 @@ public:
 	void						updateTopic(Channel* channel, const std::string& channelName, const std::string& topic, int fd);
 	void						KICK(std::string cmd, int fd);
 	std::string					SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
+	std::string					ExtractReason(std::string& reason);
+    void						CleanChannelNames(std::vector<std::string>& tmp, int fd);
+    void						SplitChannelNames(const std::string& str, std::vector<std::string>& tmp);
+
 
 private:
 	static bool					ServerRunning;
