@@ -90,3 +90,29 @@ void	Client::setFirstMessage(bool value)
 {
     this->firstMessage = value;
 }
+
+std::string Client::getHostname(){
+	return this->getNickname() + "!" + this->getUsername();
+}
+
+std::string	Client::getIPAddress()
+{
+	return this->IPAddress;
+}
+
+bool Client::getChannelInvite(std::string ChName){
+	for (size_t i = 0; i < this->channelsInvite.size(); i++){
+		if (this->channelsInvite[i] == ChName)
+			return true;
+	}
+	return false;
+}
+
+void Client::rmChannelInvite(std::string chname){
+	for (size_t i = 0; i < this->channelsInvite.size(); i++){
+		if (this->channelsInvite[i] == chname)
+			{this->channelsInvite.erase(this->channelsInvite.begin() + i);
+            return;
+            }
+	}
+}

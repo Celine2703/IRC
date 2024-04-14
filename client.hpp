@@ -25,22 +25,25 @@ public:
 	void	clearBuffer();
 
 // Getters and setters 
-	int		getFD();
-	void	setFD(int fd);
-	void	setIP(std::string IP_address);
-    const	std::string& getNickname() const;
-    void	setNickname(const std::string& nickname);
-    const	std::string& getUsername() const;
-    void	setUsername(const std::string& username);
-    bool	isRegistered() const;
-    void	setRegistered(bool registered);
-    const	std::vector<std::string>& getChannelsInvite() const;
-    void	setChannelsInvite(const std::vector<std::string>& channelsInvite);
-    const	std::string& getBuffer() const;
-    void	setBuffer(const std::string& buffer);
-	bool	isFirstMessage();
-	void	setFirstMessage(bool value);
-	
+	int				getFD();
+	void			setFD(int fd);
+	void			setIP(std::string IP_address);
+    const			std::string& getNickname() const;
+    void			setNickname(const std::string& nickname);
+    const			std::string& getUsername() const;
+    void			setUsername(const std::string& username);
+    bool			isRegistered() const;
+    void			setRegistered(bool registered);
+    const			std::vector<std::string>& getChannelsInvite() const;
+    bool			getChannelInvite(std::string name);
+    void			setChannelsInvite(const std::vector<std::string>& channelsInvite);
+	void			rmChannelInvite(std::string chname);
+    const			std::string& getBuffer() const;
+    void			setBuffer(const std::string& buffer);
+	bool			isFirstMessage();
+	void			setFirstMessage(bool value);
+	std::string		getHostname();
+	std::string		getIPAddress();
 };
 
 

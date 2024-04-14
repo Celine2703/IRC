@@ -1,4 +1,4 @@
-SRCS = irc.cpp client.cpp server.cpp \
+SRCS = irc.cpp client.cpp server.cpp Channel.cpp\
 \
 ./commands/Nick.cpp \
 \
@@ -8,7 +8,6 @@ SRCS = irc.cpp client.cpp server.cpp \
 \
 ./commands/Join.cpp \
 \
-
 
 
 OBJS = $(SRCS:.cpp=.o)

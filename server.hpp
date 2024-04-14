@@ -16,10 +16,14 @@
 #include <csignal> //-> for signal()
 #include <netinet/in.h>
 #include "client.hpp"
+#include "Channel.hpp"
 #include <cstdlib>
 #include <sstream>
 #include "replies.hpp"
 #include <algorithm>
+#include <ctime>
+#include <sstream> 
+
 
 
 #define RED "\e[1;31m"
@@ -53,6 +57,11 @@ public:
 	bool						nicknameAlreadyUseByClient(std::string& nickname);
 	void						setClientUsername(std::string cmd, int fd);
 	int 						tokenizationJoin(std::vector< std::pair <std::string, std::string> > &token, std::string cmd, int fd);
+	void						senderror(int code, std::string clientname, int fd, std::string msg);
+	void 						senderror(int code, std::string clientname, std::string channelname, int fd, std::string msg);
+	void						ExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd);
+	int							SearchForClients(std::string nickname);
+	void						NotExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int fd);
 
 private:
 	static bool					ServerRunning;
@@ -62,6 +71,7 @@ private:
 
 	std::string					password;
 	std::vector<Client>			Clients;
+	std::vector<Channel>		channels;
 	std::vector<struct pollfd>	PollFds;
 	
 
