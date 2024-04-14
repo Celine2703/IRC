@@ -6,7 +6,7 @@
 #    By: ranki <ranki@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/14 17:51:10 by ranki             #+#    #+#              #
-#    Updated: 2024/04/14 18:46:09 by ranki            ###   ########.fr        #
+#    Updated: 2024/04/14 20:34:58 by ranki            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,6 +41,8 @@ $(CMD_DIR)Join.cpp\
 $(CMD_DIR)PrivateMessage.cpp\
 \
 $(CMD_DIR)Topic.cpp\
+\
+$(CMD_DIR)Kick.cpp\
 \
 
 

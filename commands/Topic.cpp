@@ -6,12 +6,13 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 18:39:22 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:57:50 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 20:31:14 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
+// Renvoie l'heure actuelle sous forme de chaîne de caractères
 std::string Server::tTopic()
 {
     std::time_t current = std::time(NULL);
@@ -20,6 +21,8 @@ std::string Server::tTopic()
     res << current;
     return res.str();
 }
+
+// Renvoie le sujet d'un canal
 std::string Server::gettopic(std::string &input)
 {
     size_t pos = input.find(":");
@@ -30,6 +33,7 @@ std::string Server::gettopic(std::string &input)
     return input.substr(pos);
 }
 
+// Renvoie la position de deux points dans une commande
 int Server::getpos(std::string &cmd)
 {
     for (int i = 0; i < (int)cmd.size(); i++)
@@ -38,6 +42,7 @@ int Server::getpos(std::string &cmd)
     return -1;
 }
 
+// Vérifie si une commande a suffisamment de paramètres
 bool Server::hasSufficientParameters(const std::vector<std::string> &scmd, int fd)
 {
     if (scmd.size() < 2)
@@ -48,6 +53,7 @@ bool Server::hasSufficientParameters(const std::vector<std::string> &scmd, int f
     return true;
 }
 
+// Valide l'existence d'un canal
 Channel *Server::validateChannel(const std::string &channelName, int fd)
 {
     Channel *channel = GetChannel(channelName);
@@ -64,6 +70,7 @@ Channel *Server::validateChannel(const std::string &channelName, int fd)
     return channel;
 }
 
+// Gère l'affichage du sujet du canal
 void Server::handleTopicDisplay(Channel *channel, const std::string &channelName, int fd)
 {
     if (channel->GetTopicName().empty())
@@ -77,6 +84,7 @@ void Server::handleTopicDisplay(Channel *channel, const std::string &channelName
     }
 }
 
+// Met à jour le sujet du canal
 void Server::updateTopic(Channel *channel, const std::string &channelName, const std::string &topic, int fd)
 {
     if (channel->Gettopic_restriction() && !channel->get_admin(fd))
@@ -92,6 +100,8 @@ void Server::updateTopic(Channel *channel, const std::string &channelName, const
     }
 }
 
+
+// Traite la commande TOPIC
 void Server::TOPIC(std::string &cmd, int &fd)
 {
     std::vector<std::string> scmd = tokenizationCommand(cmd);

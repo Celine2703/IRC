@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:51:36 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 20:27:25 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ public:
 	Channel						*validateChannel(const std::string& channelName, int fd);
 	void						handleTopicDisplay(Channel* channel, const std::string& channelName, int fd) ;
 	void						updateTopic(Channel* channel, const std::string& channelName, const std::string& topic, int fd);
+	void						KICK(std::string cmd, int fd);
+	std::string					SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
 
 private:
 	static bool					ServerRunning;
