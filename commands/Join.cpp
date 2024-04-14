@@ -6,14 +6,14 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:56 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:51:57 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/server.hpp"
+#include "../includes/Server.hpp"
 #include <poll.h>
 #include <signal.h>
-#include "../includes/client.hpp"
+#include "../includes/Client.hpp"
 
 
 // Fonction pour tokeniser une commande JOIN et extraire le nom de canal et le mot de passe
@@ -103,7 +103,7 @@ int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &
 
 
 
-// Fonction pour vérifier si un client est invité dans un canal
+// Fonction pour vérifier si un Client est invité dans un canal
 bool IsInvited(Client *cli, std::string ChName, int flag)
 {
     if (cli->getChannelInvite(ChName))
@@ -119,9 +119,9 @@ bool IsInvited(Client *cli, std::string ChName, int flag)
 // Fonction pour traiter le cas où un canal existe déjà
 void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd)
 {
-    if (this->channels[j].GetClientInChannel(GetClient(fd)->getNickname())) // if the client is already registered
+    if (this->channels[j].GetClientInChannel(GetClient(fd)->getNickname())) // if the Client is already registered
         return;
-    if (SearchForClients(GetClient(fd)->getNickname()) >= 10) // ERR_TOOMANYCHANNELS (405) // if the client is already in 10 channels
+    if (SearchForClients(GetClient(fd)->getNickname()) >= 10) // ERR_TOOMANYCHANNELS (405) // if the Client is already in 10 channels
     {
         senderror(405, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :You have joined too many channels\r\n");
         return;
@@ -142,23 +142,23 @@ void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, i
             return;
         }
     }
-    if (this->channels[j].GetLimit() && this->channels[j].GetClientsNumber() >= this->channels[j].GetLimit()) // ERR_CHANNELISFULL (471) // if the channel reached the limit of number of clients
+    if (this->channels[j].GetLimit() && this->channels[j].GetClientsNumber() >= this->channels[j].GetLimit()) // ERR_CHANNELISFULL (471) // if the channel reached the limit of number of Clients
     {
         senderror(471, GetClient(fd)->getNickname(), "#" + token[i].first, GetClient(fd)->getFD(), " :Cannot join channel (+l)\r\n");
         return;
     }
-    // add the client to the channel
+    // add the Client to the channel
     Client *cli = GetClient(fd);
-    this->channels[j].add_client(*cli);
+    this->channels[j].add_Client(*cli);
     if (channels[j].GetTopicName().empty())
         sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first) +
-                          RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].clientChannel_list()) +
+                          RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
                           RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
                       fd);
     else
         sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first) +
                           RPL_TOPICIS(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].GetTopicName()) +
-                          RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].clientChannel_list()) +
+                          RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
                           RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
                       fd);
     channels[j].sendTo_all(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first), fd);
@@ -169,7 +169,7 @@ void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, i
 // Fonction pour traiter le cas où un canal n'existe pas encore
 void Server::NotExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int fd)
 {
-    if (SearchForClients(GetClient(fd)->getNickname()) >= 10) // ERR_TOOMANYCHANNELS (405) // if the client is already in 10 channels
+    if (SearchForClients(GetClient(fd)->getNickname()) >= 10) // ERR_TOOMANYCHANNELS (405) // if the Client is already in 10 channels
     {
         senderror(405, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :You have joined too many channels\r\n");
         return;
@@ -179,15 +179,15 @@ void Server::NotExistCh(std::vector<std::pair<std::string, std::string> > &token
     newChannel.add_admin(*GetClient(fd));
     newChannel.set_createiontime();
     this->channels.push_back(newChannel);
-    // notifiy thet the client joined the channel
+    // notifiy thet the Client joined the channel
     sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), newChannel.GetName()) +
-                      RPL_NAMREPLY(GetClient(fd)->getNickname(), newChannel.GetName(), newChannel.clientChannel_list()) +
+                      RPL_NAMREPLY(GetClient(fd)->getNickname(), newChannel.GetName(), newChannel.ClientChannel_list()) +
                       RPL_ENDOFNAMES(GetClient(fd)->getNickname(), newChannel.GetName()),
                   fd);
 }
 
-// Fonction pour gérer la commande JOIN d'un client
-void Server::JOIN_client(std::string cmd, int fd)
+// Fonction pour gérer la commande JOIN d'un Client
+void Server::JOIN_Client(std::string cmd, int fd)
 {
     (void)fd;
 
@@ -202,7 +202,7 @@ void Server::JOIN_client(std::string cmd, int fd)
         return;
     }
     
-    // le client a deja trop de channel
+    // le Client a deja trop de channel
     if (token.size() > 10)
     {
         senderror(407, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :Too many channels\r\n");

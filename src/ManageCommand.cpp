@@ -6,11 +6,11 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:51:28 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/server.hpp"
+#include "../includes/Server.hpp"
 
 void Server::ParseCommand(std::string cmd, int fd)
 {
@@ -27,7 +27,7 @@ void Server::ParseCommand(std::string cmd, int fd)
 
 	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass"))
 	{
-		this->PASS_client(fd, tokens[1]);
+		this->PASS_Client(fd, tokens[1]);
 	}
 	else if (tokens.size() && (tokens[0] == "NICK" || tokens[0] == "nick"))
 	{
@@ -39,7 +39,7 @@ void Server::ParseCommand(std::string cmd, int fd)
 	}
 	else if (tokens.size() && (tokens[0] == "JOIN" || tokens[0] == "join"))
 	{
-		JOIN_client(cmd, fd);
+		JOIN_Client(cmd, fd);
 	}
 	else if (tokens.size() && (tokens[0] == "PRIVMSG" || tokens[0] == "privmsg"))
 	{

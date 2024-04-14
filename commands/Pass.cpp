@@ -6,14 +6,14 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:03 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:52:04 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/server.hpp"
+#include "../includes/Server.hpp"
 #include <poll.h>
 #include <signal.h>
-#include "../includes/client.hpp"
+#include "../includes/Client.hpp"
 
 std::string removeNewline2(std::string str)
 {
@@ -23,7 +23,7 @@ std::string removeNewline2(std::string str)
 }
 
 // PASS
-void Server::PASS_client(int fd, std::string cmd)
+void Server::PASS_Client(int fd, std::string cmd)
 {
 	Client *cli = GetClient(fd);
 

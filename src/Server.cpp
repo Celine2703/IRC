@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:51:30 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include "Server.hpp"
 #include <poll.h>
 #include <signal.h>
-#include "client.hpp"
+#include "Client.hpp"
 // bool Server::ServerRunning = true;
 
 Server::Server()
@@ -46,7 +46,7 @@ void Server::Start(std::string password, int port)
 			{
 				if (PollFds[i].revents & POLLIN) //-> check if the event is POLLIN
 				{
-					if (PollFds[i].fd == ServerSocketFd) //-> check if the event is from the server socket
+					if (PollFds[i].fd == ServerSocketFd) //-> check if the event is from the Server socket
 					{
 						AcceptClient();
 					}
@@ -89,7 +89,7 @@ void Server::AcceptClient()
 
 	if (ClientSocketFd == -1)
 	{
-		throw(std::runtime_error("faild to accept client"));
+		throw(std::runtime_error("faild to accept Client"));
 	}
 
 	if (fcntl(ClientSocketFd, F_SETFL, O_NONBLOCK) == -1)
@@ -116,7 +116,7 @@ void Server::ServerSocket()
 	add.sin_port = htons(this->Port); // convert the port to network byte order
 	add.sin_addr.s_addr = INADDR_ANY; //-> set the address to any local machine address
 
-	ServerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //-> create the server socket
+	ServerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //-> create the Server socket
 	if (ServerSocketFd == -1)						  //-> check if the socket is created
 		throw(std::runtime_error("faild to create socket"));
 
@@ -130,10 +130,10 @@ void Server::ServerSocket()
 	if (listen(ServerSocketFd, SOMAXCONN) == -1) //-> listen for incoming connections and making the socket a passive socket
 		throw(std::runtime_error("listen() faild"));
 
-	NewPoll.fd = ServerSocketFd; //-> add the server socket to the pollfd
+	NewPoll.fd = ServerSocketFd; //-> add the Server socket to the pollfd
 	NewPoll.events = POLLIN;	 //-> set the event to POLLIN for reading data
 	NewPoll.revents = 0;		 //-> set the revents to 0
-	PollFds.push_back(NewPoll);	 //-> add the server socket to the pollfd
+	PollFds.push_back(NewPoll);	 //-> add the Server socket to the pollfd
 }
 
 void Server::ServerInit()

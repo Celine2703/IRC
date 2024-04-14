@@ -6,11 +6,11 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:24 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:51:25 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/server.hpp"
+#include "../includes/Server.hpp"
 
 Client *Server::GetClientNick(std::string nickname)
 {
@@ -52,7 +52,7 @@ Client *Server::GetClient(int fd)
 }
 
 
-// Fonction pour rechercher les clients dans tous les canaux par leur surnom
+// Fonction pour rechercher les Clients dans tous les canaux par leur surnom
 int Server::SearchForClients(std::string nickname)
 {
     int count = 0;

@@ -6,7 +6,7 @@
 #    By: ranki <ranki@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/14 17:51:10 by ranki             #+#    #+#              #
-#    Updated: 2024/04/14 17:51:11 by ranki            ###   ########.fr        #
+#    Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,9 @@ SRC_DIR = ./src/
 
 SRCS = main.cpp\
 \
-$(SRC_DIR)client.cpp\
+$(SRC_DIR)Client.cpp\
 \
-./src/server.cpp\
+./src/Server.cpp\
 \
 $(SRC_DIR)Channel.cpp\
 \

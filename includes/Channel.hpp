@@ -6,15 +6,15 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:34 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:51:35 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-#include "server.hpp"
-#include "client.hpp"
+#include "Server.hpp"
+#include "Client.hpp"
 
 class Client;
 class Channel
@@ -31,7 +31,7 @@ private:
 	std::string password;
 	std::string created_at;
 	std::string topic_name;
-	std::vector<Client> clients;
+	std::vector<Client> Clients;
 	std::vector<Client> admins;
 	std::vector<std::pair<char, bool> > modes;
 public:
@@ -59,23 +59,23 @@ public:
 	int GetClientsNumber();
 	bool Gettopic_restriction() const;
 	bool getModeAtindex(size_t index);
-	bool clientInChannel(std::string &nick);
+	bool ClientInChannel(std::string &nick);
 	std::string GetTopicName();
 	std::string GetPassword();
 	std::string GetName();
 	std::string GetTime();
 	std::string get_creationtime();
 	std::string getModes();
-	std::string clientChannel_list();
-	Client *get_client(int fd);
+	std::string ClientChannel_list();
+	Client *get_Client(int fd);
 	Client *get_admin(int fd);
 	Client *GetClientInChannel(std::string name);
 	//---------------//Methods
-	void add_client(Client newClient);
+	void add_Client(Client newClient);
 	void add_admin(Client newClient);
-	void remove_client(int fd);
+	void remove_Client(int fd);
 	void remove_admin(int fd);
-	bool change_clientToAdmin(std::string& nick);
+	bool change_ClientToAdmin(std::string& nick);
 	bool change_adminToClient(std::string& nick);
 	//---------------//SendToAll
 	void sendTo_all(std::string rpl1);
