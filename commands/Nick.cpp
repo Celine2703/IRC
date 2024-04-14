@@ -6,21 +6,18 @@
 std::string removeNewline(std::string str)
 {
 	str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+	str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
 	return str;
 }
 
 bool Server::is_validNickname(std::string &nickname)
 {
 	if (!nickname.empty() && (nickname[0] == '&' || nickname[0] == '#' || nickname[0] == ':'))
-	{
 		return false;
-	}
 	for (size_t i = 1; i < nickname.size(); i++)
 	{
 		if (!std::isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
-		{
 			return false;
-		}
 	}
 	return true;
 }
@@ -40,7 +37,7 @@ void Server::setClientNickname(std::string cmd, int fd)
 {
 	std::string inuse;
 	Client *cli = GetClient(fd);
-	cmd = this->removeFirstBackLine(cmd);
+	cmd = removeNewline(cmd);
 	if (cmd.empty())
 	{
 		sendResponse(RED + ERR_NOTENOUGHPARAM(std::string("*")) + WHI, fd);

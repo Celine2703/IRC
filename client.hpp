@@ -16,7 +16,8 @@ private:
 	bool						login;
 	std::vector<std::string>	channelsInvite;
 	std::string					buffer;
-
+	bool						firstMessage;
+	
 public:
 	Client();
 
@@ -37,6 +38,8 @@ public:
     void	setChannelsInvite(const std::vector<std::string>& channelsInvite);
     const	std::string& getBuffer() const;
     void	setBuffer(const std::string& buffer);
+	bool	isFirstMessage();
+	void	setFirstMessage(bool value);
 	
 };
 

@@ -80,6 +80,12 @@ void Server::ParseCommmand(std::string cmd, int fd)
 	if (cmd.empty())
 		return;
 
+	if (cmd == "CAP LS" && GetClient(fd)->isFirstMessage())
+	{
+		GetClient(fd)->setFirstMessage(false);
+		return;
+	}
+
 	std::vector<std::string> tokens = tokenizationCommand(cmd);
 
 	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass"))
@@ -98,7 +104,7 @@ void Server::ParseCommmand(std::string cmd, int fd)
 
 std::string Server::removeFirstBackLine(std::string str)
 {
-	size_t pos = str.find("\n");
+	size_t pos = str.find("\n\r");
 	if (pos != std::string::npos)
 	{
 		str.erase(pos, 1);
@@ -136,8 +142,15 @@ void Server::ReceiveData(int fd)
 		// s'il a fait enter alors on va s'occuper de la commande dans sa totalité
 		std::cout << "Received in client : " << cli->getBuffer() << std::endl;
 
-		// on execute la commande
-		ParseCommmand(buffer, fd);
+		//on va d'abord split la commandee en "/n"
+		std::istringstream iss(buffer);
+    	std::string line;
+		while (std::getline(iss, line))
+		{
+			// on execute la commande
+			std::cout << "Execute commande : " << line << std::endl;
+			ParseCommmand(line, fd);
+		}
 
 		// laiser getClient et non la var cli car si c'est l'order Kick la var cli est null
 		if (GetClient(fd))

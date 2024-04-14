@@ -10,6 +10,7 @@ Client::Client()
     login = false;
     channelsInvite = std::vector<std::string>();
     buffer = "";
+    firstMessage = true;
 }
 
 int Client::getFD()
@@ -78,3 +79,14 @@ void Client::setBuffer(const std::string &buffer)
 }
 
 void Client::clearBuffer() { buffer.clear(); }
+
+
+bool	Client::isFirstMessage()
+{
+	return this->firstMessage;
+}
+
+void	Client::setFirstMessage(bool value)
+{
+    this->firstMessage = value;
+}
