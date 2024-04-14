@@ -6,11 +6,23 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:01 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:16:30 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 22:51:06 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
+
+
+// Méthode principale qui utilise les sous-méthodes pour traiter la commande PART.
+void Server::PART(std::string cmd, int fd)
+{
+    std::vector<std::string> tmp;
+    std::string reason;
+    if (!VerifyParameters(cmd, tmp, reason, fd))
+        return;
+
+    ProcessChannelPart(tmp, reason, fd);
+}
 
 void FindPR(std::string cmd, std::string tofind, std::string &str)
 {
@@ -182,15 +194,4 @@ void Server::RemoveFromChannel(int fd, size_t channelIndex)
 
     if (channels[channelIndex].GetClientsNumber() == 0)
         channels.erase(channels.begin() + channelIndex);
-}
-
-// Méthode principale qui utilise les sous-méthodes pour traiter la commande PART.
-void Server::PART(std::string cmd, int fd)
-{
-    std::vector<std::string> tmp;
-    std::string reason;
-    if (!VerifyParameters(cmd, tmp, reason, fd))
-        return;
-
-    ProcessChannelPart(tmp, reason, fd);
 }
