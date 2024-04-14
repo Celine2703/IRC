@@ -6,12 +6,13 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 20:25:45 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 21:04:25 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 21:12:43 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
+// Trouve et extrait la sous-chaîne après un mot spécifié dans une commande.
 void FindK(std::string cmd, std::string tofind, std::string &str)
 {
     size_t i = 0;
@@ -36,6 +37,7 @@ void FindK(std::string cmd, std::string tofind, std::string &str)
     str = str.substr(i);
 }
 
+// Divise la commande en mots et trouve la raison associée à un mot clé.
 std::string SplitCmdK(std::string &cmd, std::vector<std::string> &tmp)
 {
     std::stringstream ss(cmd);
@@ -49,7 +51,8 @@ std::string SplitCmdK(std::string &cmd, std::vector<std::string> &tmp)
     return reason;
 }
 
-std::string Server::ExtractReason(std::string& reason)
+// Extrait la raison d'un argument de commande, en nettoyant les préfixes et en limitant à l'espace.
+std::string Server::ExtractReason(std::string &reason)
 {
     if (reason[0] == ':')
     {
@@ -64,7 +67,8 @@ std::string Server::ExtractReason(std::string& reason)
     return reason;
 }
 
-void Server::CleanChannelNames(std::vector<std::string>& tmp, int fd)
+// Nettoie les noms de canaux dans une liste, supprimant les canaux invalides ou vides.
+void Server::CleanChannelNames(std::vector<std::string> &tmp, int fd)
 {
     for (size_t i = 0; i < tmp.size(); i++)
     {
@@ -84,7 +88,8 @@ void Server::CleanChannelNames(std::vector<std::string>& tmp, int fd)
     }
 }
 
-void Server::SplitChannelNames(const std::string& str, std::vector<std::string>& tmp)
+// Sépare les noms de canaux basés sur des virgules dans une chaîne donnée.
+void Server::SplitChannelNames(const std::string &str, std::vector<std::string> &tmp)
 {
     std::string str1;
     for (size_t i = 0; i < str.size(); i++)
@@ -102,25 +107,27 @@ void Server::SplitChannelNames(const std::string& str, std::vector<std::string>&
     tmp.push_back(str1);
 }
 
+// Traite la commande Kick, séparant les arguments et nettoyant le nom du canal.
 std::string Server::SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd)
 {
-        std::string reason = SplitCmdK(cmd, tmp);
+    std::string reason = SplitCmdK(cmd, tmp);
 
-        if (tmp.size() < 3)
-            return std::string("");
+    if (tmp.size() < 3)
+        return std::string("");
 
-        tmp.erase(tmp.begin());
-        std::string str = tmp[0];
-        user = tmp[1];
-        tmp.clear();
+    tmp.erase(tmp.begin());
+    std::string str = tmp[0];
+    user = tmp[1];
+    tmp.clear();
 
-        SplitChannelNames(str, tmp);
-        CleanChannelNames(tmp, fd);
-        reason = ExtractReason(reason);
+    SplitChannelNames(str, tmp);
+    CleanChannelNames(tmp, fd);
+    reason = ExtractReason(reason);
 
-        return reason;
-    }
+    return reason;
+}
 
+// Applique la commande KICK à l'utilisateur spécifié dans les canaux spécifiés.
 void Server::KICK(std::string cmd, int fd)
 {
     std::vector<std::string> tmp;
@@ -133,7 +140,8 @@ void Server::KICK(std::string cmd, int fd)
     ProcessKickForChannel(user, reason, tmp, fd);
 }
 
-bool Server::CheckParameters(const std::string& user, int fd)
+// Vérifie si les paramètres nécessaires sont présents pour une commande.
+bool Server::CheckParameters(const std::string &user, int fd)
 {
     if (user.empty())
     {
@@ -143,11 +151,12 @@ bool Server::CheckParameters(const std::string& user, int fd)
     return true;
 }
 
-void Server::ProcessKickForChannel(const std::string& user, const std::string& reason, std::vector<std::string>& tmp, int fd)
+// Gère l'action de kick pour chaque canal impliqué, envoyant les notifications nécessaires.
+void Server::ProcessKickForChannel(const std::string &user, const std::string &reason, std::vector<std::string> &tmp, int fd)
 {
     for (size_t i = 0; i < tmp.size(); i++)
     {
-        Channel* ch = GetChannel(tmp[i]);
+        Channel *ch = GetChannel(tmp[i]);
         if (!ch)
         {
             senderror(403, "#" + tmp[i], fd, " :No such channel\r\n");
@@ -169,7 +178,6 @@ void Server::ProcessKickForChannel(const std::string& user, const std::string& r
             continue;
         }
 
-        // Execute kick operation
         std::stringstream ss;
         ss << ":" << GetClient(fd)->getNickname() << "!~" << GetClient(fd)->getUsername() << "@localhost KICK #" << tmp[i] << " " << user;
         if (!reason.empty())
