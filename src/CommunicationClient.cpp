@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:20 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 18:58:06 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void Server::sendResponse(std::string response, int fd)
 	if (send(fd, response.c_str(), response.size(), 0) == -1)
 		std::cerr << "Response send() faild" << std::endl;
 }
-
 
 void Server::ReceiveData(int fd)
 {
@@ -49,9 +48,9 @@ void Server::ReceiveData(int fd)
 		// s'il a fait enter alors on va s'occuper de la commande dans sa totalité
 		std::cout << "Received in Client : " << cli->getBuffer() << std::endl;
 
-		//on va d'abord split la commandee en "/n"
+		// on va d'abord split la commandee en "/n"
 		std::istringstream iss(buffer);
-    	std::string line;
+		std::string line;
 		while (std::getline(iss, line))
 		{
 			// on execute la commande
@@ -67,17 +66,15 @@ void Server::ReceiveData(int fd)
 	}
 }
 
-
 // Fonction pour envoyer un message d'erreur à un Client
 void Server::senderror(int code, std::string Clientname, int fd, std::string msg)
 {
 	std::stringstream ss;
 	ss << ":localhost " << code << " " << Clientname << msg;
 	std::string resp = ss.str();
-	if(send(fd, resp.c_str(), resp.size(),0) == -1)
+	if (send(fd, resp.c_str(), resp.size(), 0) == -1)
 		std::cerr << "send() faild" << std::endl;
 }
-
 
 // Fonction pour envoyer un message d'erreur à un Client concernant un canal spécifique
 void Server::senderror(int code, std::string Clientname, std::string channelname, int fd, std::string msg)
@@ -85,6 +82,6 @@ void Server::senderror(int code, std::string Clientname, std::string channelname
 	std::stringstream ss;
 	ss << ":localhost " << code << " " << Clientname << " " << channelname << msg;
 	std::string resp = ss.str();
-	if(send(fd, resp.c_str(), resp.size(),0) == -1)
+	if (send(fd, resp.c_str(), resp.size(), 0) == -1)
 		std::cerr << "send() faild" << std::endl;
 }

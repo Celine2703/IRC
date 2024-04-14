@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:44:46 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 18:57:17 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void Server::ParseCommand(std::string cmd, int fd)
 	{
 		TOPIC(cmd, fd);
 	}
-	
 }
 
 std::vector<std::string> Server::tokenizationCommand(std::string &cmd)

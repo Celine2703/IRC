@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:18 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:41 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 18:58:04 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,39 +92,44 @@ void Client::setBuffer(const std::string &buffer)
 
 void Client::clearBuffer() { buffer.clear(); }
 
-
-bool	Client::isFirstMessage()
+bool Client::isFirstMessage()
 {
-	return this->firstMessage;
+    return this->firstMessage;
 }
 
-void	Client::setFirstMessage(bool value)
+void Client::setFirstMessage(bool value)
 {
     this->firstMessage = value;
 }
 
-std::string Client::getHostname(){
-	return this->getNickname() + "!" + this->getUsername();
-}
-
-std::string	Client::getIPAddress()
+std::string Client::getHostname()
 {
-	return this->IPAddress;
+    return this->getNickname() + "!" + this->getUsername();
 }
 
-bool Client::getChannelInvite(std::string ChName){
-	for (size_t i = 0; i < this->channelsInvite.size(); i++){
-		if (this->channelsInvite[i] == ChName)
-			return true;
-	}
-	return false;
+std::string Client::getIPAddress()
+{
+    return this->IPAddress;
 }
 
-void Client::rmChannelInvite(std::string chname){
-	for (size_t i = 0; i < this->channelsInvite.size(); i++){
-		if (this->channelsInvite[i] == chname)
-			{this->channelsInvite.erase(this->channelsInvite.begin() + i);
+bool Client::getChannelInvite(std::string ChName)
+{
+    for (size_t i = 0; i < this->channelsInvite.size(); i++)
+    {
+        if (this->channelsInvite[i] == ChName)
+            return true;
+    }
+    return false;
+}
+
+void Client::rmChannelInvite(std::string chname)
+{
+    for (size_t i = 0; i < this->channelsInvite.size(); i++)
+    {
+        if (this->channelsInvite[i] == chname)
+        {
+            this->channelsInvite.erase(this->channelsInvite.begin() + i);
             return;
-            }
-	}
+        }
+    }
 }

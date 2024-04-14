@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:24 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 18:58:12 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 Client *Server::GetClientNick(std::string nickname)
 {
-	for (size_t i = 0; i < this->Clients.size(); i++){
+	for (size_t i = 0; i < this->Clients.size(); i++)
+	{
 		if (this->Clients[i].getNickname() == nickname)
 			return &this->Clients[i];
 	}
@@ -51,15 +52,14 @@ Client *Server::GetClient(int fd)
 	return NULL;
 }
 
-
 // Fonction pour rechercher les Clients dans tous les canaux par leur surnom
 int Server::SearchForClients(std::string nickname)
 {
-    int count = 0;
-    for (size_t i = 0; i < this->channels.size(); i++)
-    {
-        if (this->channels[i].GetClientInChannel(nickname))
-            count++;
-    }
-    return count;
+	int count = 0;
+	for (size_t i = 0; i < this->channels.size(); i++)
+	{
+		if (this->channels[i].GetClientInChannel(nickname))
+			count++;
+	}
+	return count;
 }

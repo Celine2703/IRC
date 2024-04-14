@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:56 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 19:01:40 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,24 @@
 #include <signal.h>
 #include "../includes/Client.hpp"
 
-
 // Fonction pour tokeniser une commande JOIN et extraire le nom de canal et le mot de passe
 int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &token, std::string cmd, int fd)
 {
-    std::vector<std::string>    tmp;
-    std::string                 channelName, PassChannel, buff;
-    std::istringstream          iss(cmd);
-    
+    std::vector<std::string> tmp;
+    std::string channelName, PassChannel, buff;
+    std::istringstream iss(cmd);
+
     // Extraction des tokens de la commande et stockage dans le vecteur temporaire
     while (iss >> cmd)
         tmp.push_back(cmd);
-    
+
     // Vérification de la taille des tokens et nettoyage du vecteur de tokens si nécessaire
     if (tmp.size() < 2)
     {
         token.clear();
         return 0;
     }
-    
+
     // Traitement des tokens pour extraire le nom de canal et le mot de passe
     tmp.erase(tmp.begin());
     channelName = tmp[0];
@@ -43,7 +42,7 @@ int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &
         PassChannel = tmp[0];
         tmp.clear();
     }
-    
+
     // Tokenisation du nom de canal
     for (size_t i = 0; i < channelName.size(); i++)
     {
@@ -56,7 +55,7 @@ int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &
             buff += channelName[i];
     }
     token.push_back(std::make_pair(buff, ""));
-    
+
     // Tokenisation du mot de passe s'il existe
     if (!PassChannel.empty())
     {
@@ -75,33 +74,31 @@ int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &
         }
         token[j].second = buff;
     }
-    
+
     // Suppression des noms de canal vides du vecteur de tokens
     for (size_t i = 0; i < token.size(); i++)
     {
         if (token[i].first.empty())
             token.erase(token.begin() + i--);
     }
-    
+
     // Vérification et traitement des noms de canal invalides
     for (size_t i = 0; i < token.size(); i++)
     {
         if (*(token[i].first.begin()) != '#')
         {
             // Envoi d'une réponse d'erreur si le nom de canal est invalide
-            // il faut créer un channel quand ce dernier nexiste oas 
-            sendResponse("403 " +  GetClient(fd)->getNickname() + " " +  token[i].first + " :No such channel\r\n", GetClient(fd)->getFD());
+            // il faut créer un channel quand ce dernier nexiste oas
+            sendResponse("403 " + GetClient(fd)->getNickname() + " " + token[i].first + " :No such channel\r\n", GetClient(fd)->getFD());
             token.erase(token.begin() + i--);
         }
         else
             token[i].first.erase(token[i].first.begin());
     }
-    
+
     // Retourne 1 pour indiquer le succès de la tokenisation
     return 1;
 }
-
-
 
 // Fonction pour vérifier si un Client est invité dans un canal
 bool IsInvited(Client *cli, std::string ChName, int flag)
@@ -114,7 +111,6 @@ bool IsInvited(Client *cli, std::string ChName, int flag)
     }
     return false;
 }
-
 
 // Fonction pour traiter le cas où un canal existe déjà
 void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd)
@@ -152,19 +148,17 @@ void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, i
     this->channels[j].add_Client(*cli);
     if (channels[j].GetTopicName().empty())
         sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first) +
-                          RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
-                          RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
-                      fd);
+                         RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
+                         RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
+                     fd);
     else
         sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first) +
-                          RPL_TOPICIS(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].GetTopicName()) +
-                          RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
-                          RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
-                      fd);
+                         RPL_TOPICIS(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].GetTopicName()) +
+                         RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
+                         RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
+                     fd);
     channels[j].sendTo_all(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first), fd);
 }
-
-
 
 // Fonction pour traiter le cas où un canal n'existe pas encore
 void Server::NotExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int fd)
@@ -181,9 +175,9 @@ void Server::NotExistCh(std::vector<std::pair<std::string, std::string> > &token
     this->channels.push_back(newChannel);
     // notifiy thet the Client joined the channel
     sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), newChannel.GetName()) +
-                      RPL_NAMREPLY(GetClient(fd)->getNickname(), newChannel.GetName(), newChannel.ClientChannel_list()) +
-                      RPL_ENDOFNAMES(GetClient(fd)->getNickname(), newChannel.GetName()),
-                  fd);
+                     RPL_NAMREPLY(GetClient(fd)->getNickname(), newChannel.GetName(), newChannel.ClientChannel_list()) +
+                     RPL_ENDOFNAMES(GetClient(fd)->getNickname(), newChannel.GetName()),
+                 fd);
 }
 
 // Fonction pour gérer la commande JOIN d'un Client
@@ -195,13 +189,13 @@ void Server::JOIN_Client(std::string cmd, int fd)
 
     std::vector<std::pair<std::string, std::string> > token;
 
-    // pas de nom de channel 
+    // pas de nom de channel
     if (!tokenizationJoin(token, cmd, fd))
     {
         senderror(461, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :Not enough parameters\r\n");
         return;
     }
-    
+
     // le Client a deja trop de channel
     if (token.size() > 10)
     {
