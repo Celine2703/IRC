@@ -6,7 +6,7 @@
 #    By: ranki <ranki@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/14 17:51:10 by ranki             #+#    #+#              #
-#    Updated: 2024/04/14 22:05:58 by ranki            ###   ########.fr        #
+#    Updated: 2024/04/14 22:33:54 by ranki            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,6 +49,8 @@ $(CMD_DIR)Topic.cpp\
 $(CMD_DIR)Kick.cpp\
 \
 $(CMD_DIR)Part.cpp\
+\
+$(CMD_DIR)Quit.cpp\
 \
 
 

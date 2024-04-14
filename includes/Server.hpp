@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:16:18 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 22:35:25 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,19 @@
 
 
 class Server {
+
+private:
+	static bool					ServerRunning;
+
+	int							Port;
+	int							ServerSocketFd;
+
+	std::string					password;
+	std::vector<Client>			Clients;
+	std::vector<Channel>		channels;
+	std::vector<struct pollfd>	PollFds;
+	
+
 public:
 	
 	Server();
@@ -102,18 +115,10 @@ public:
 	void						ProcessChannelPart(std::vector<std::string>& channels, std::string& reason, int fd);
 	void						HandleChannelParticipation(const std::string& channel, const std::string& reason, int fd, size_t channelIndex);
 	void						RemoveFromChannel(int fd, size_t channelIndex);
-
-
-private:
-	static bool					ServerRunning;
-
-	int							Port;
-	int							ServerSocketFd;
-
-	std::string					password;
-	std::vector<Client>			Clients;
-	std::vector<Channel>		channels;
-	std::vector<struct pollfd>	PollFds;
+	void						QUIT(std::string cmd, int fd);
+	void						RemoveFds(int fd);
+	void						RemoveClient(int fd);
+	void						RmChannels(int fd);
 	
 
 };
