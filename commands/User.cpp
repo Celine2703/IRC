@@ -1,7 +1,7 @@
-#include "../server.hpp"
+#include "../includes/server.hpp"
 #include <poll.h>
 #include <signal.h>
-#include "../client.hpp"
+#include "../includes/client.hpp"
 
 void Server::setClientUsername(std::string cmd, int fd)
 {
