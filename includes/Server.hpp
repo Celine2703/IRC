@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:13:01 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 22:16:18 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,10 @@ public:
 	void						NormalizeReason(std::string &reason);
 	int							SplitCmdPart(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
 	void 						ExtractChannels(std::string &str, std::vector<std::string> &channels);
+	bool						VerifyParameters(std::string cmd, std::vector<std::string>& tmp, std::string& reason, int fd);
+	void						ProcessChannelPart(std::vector<std::string>& channels, std::string& reason, int fd);
+	void						HandleChannelParticipation(const std::string& channel, const std::string& reason, int fd, size_t channelIndex);
+	void						RemoveFromChannel(int fd, size_t channelIndex);
 
 
 private:
