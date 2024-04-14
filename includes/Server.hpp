@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:44:18 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/14 18:51:36 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,10 @@ public:
 	std::string					gettopic(std::string &input);
 	int							getpos(std::string &cmd);
 	void						TOPIC(std::string &cmd, int &fd);
+	bool						hasSufficientParameters(const std::vector<std::string>& scmd, int fd);
+	Channel						*validateChannel(const std::string& channelName, int fd);
+	void						handleTopicDisplay(Channel* channel, const std::string& channelName, int fd) ;
+	void						updateTopic(Channel* channel, const std::string& channelName, const std::string& topic, int fd);
 
 private:
 	static bool					ServerRunning;
