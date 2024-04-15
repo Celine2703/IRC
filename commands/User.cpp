@@ -1,7 +1,19 @@
-#include "../server.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/14 17:52:34 by ranki             #+#    #+#             */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/Server.hpp"
 #include <poll.h>
 #include <signal.h>
-#include "../client.hpp"
+#include "../includes/Client.hpp"
 
 void Server::setClientUsername(std::string cmd, int fd)
 {
@@ -22,11 +34,10 @@ void Server::setClientUsername(std::string cmd, int fd)
 	else
 	{
 		cli->setUsername(cmd);
-		sendResponse(GRE + std::string("YOU'RE USERNAME IS SET.\n") + WHI, fd);
 	}
 	if (cli && cli->isRegistered() && !cli->getUsername().empty() && !cli->getNickname().empty() && cli->getNickname() != "*") // && !cli->GetLogedIn()
 	{
 		// cli->setLogedin(true);
-		sendResponse(GRE + RPL_CONNECTED(cli->getNickname()) + WHI, fd);
+		sendResponse(RPL_CONNECTED(cli->getNickname()), fd);
 	}
 }

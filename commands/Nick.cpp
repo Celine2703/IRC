@@ -1,26 +1,35 @@
-#include "../server.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Nick.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/14 17:51:59 by ranki             #+#    #+#             */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/Server.hpp"
 #include <poll.h>
 #include <signal.h>
-#include "../client.hpp"
+#include "../includes/Client.hpp"
 
 std::string removeNewline(std::string str)
 {
 	str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+	str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
 	return str;
 }
 
 bool Server::is_validNickname(std::string &nickname)
 {
 	if (!nickname.empty() && (nickname[0] == '&' || nickname[0] == '#' || nickname[0] == ':'))
-	{
 		return false;
-	}
 	for (size_t i = 1; i < nickname.size(); i++)
 	{
 		if (!std::isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
-		{
 			return false;
-		}
 	}
 	return true;
 }
@@ -40,7 +49,7 @@ void Server::setClientNickname(std::string cmd, int fd)
 {
 	std::string inuse;
 	Client *cli = GetClient(fd);
-	cmd = this->removeFirstBackLine(cmd);
+	cmd = removeNewline(cmd);
 	if (cmd.empty())
 	{
 		sendResponse(RED + ERR_NOTENOUGHPARAM(std::string("*")) + WHI, fd);
@@ -70,11 +79,10 @@ void Server::setClientNickname(std::string cmd, int fd)
 				if (oldnick == "*" && !cli->getUsername().empty())
 				{
 					// cli->setLogedin(true);
-					sendResponse(GRE + RPL_CONNECTED(cli->getNickname()) + WHI, fd);
-					sendResponse(GRE + RPL_NICKCHANGE(cli->getNickname(), cmd) + WHI, fd);
+					sendResponse(RPL_NICKCHANGE(cli->getNickname(), cmd), fd);
 				}
 				else
-					sendResponse(GRE + RPL_NICKCHANGE(oldnick, cmd) + WHI, fd);
+					sendResponse(RPL_NICKCHANGE(oldnick, cmd), fd);
 				return;
 			}
 		}
@@ -85,6 +93,6 @@ void Server::setClientNickname(std::string cmd, int fd)
 	if (cli && cli->isRegistered() && !cli->getNickname().empty() && !cli->getNickname().empty() && cli->getNickname() != "*")
 	{
 		// cli->setLogedin(true);
-		sendResponse(GRE + RPL_CONNECTED(cli->getNickname()) + WHI, fd);
+		sendResponse(RPL_CONNECTED(cli->getNickname()), fd);
 	}
 }

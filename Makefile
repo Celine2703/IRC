@@ -1,12 +1,59 @@
-SRCS = irc.cpp client.cpp server.cpp \
-\
-./commands/Nick.cpp \
-\
-./commands/Pass.cpp \
-\
-./commands/User.cpp \
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ranki <ranki@student.42.fr>                +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/04/14 17:51:10 by ranki             #+#    #+#              #
+#    Updated: 2024/04/14 22:33:54 by ranki            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-HEAD = channel.hpp Join.hpp Nick.hpp Part.hpp Pass.hpp Quit.hpp User.hpp
+SRC_DIR = ./src/
+
+CMD_DIR = ./commands/
+
+SRCS = main.cpp\
+\
+\
+\
+$(SRC_DIR)Client.cpp\
+\
+$(SRC_DIR)Server.cpp\
+\
+$(SRC_DIR)Channel.cpp\
+\
+$(SRC_DIR)ManageChannel.cpp\
+\
+$(SRC_DIR)ManageClient.cpp\
+\
+$(SRC_DIR)ManageCommand.cpp\
+\
+$(SRC_DIR)CommunicationClient.cpp\
+\
+\
+\
+$(CMD_DIR)Nick.cpp\
+\
+$(CMD_DIR)Pass.cpp\
+\
+$(CMD_DIR)User.cpp\
+\
+$(CMD_DIR)Join.cpp\
+\
+$(CMD_DIR)PrivateMessage.cpp\
+\
+$(CMD_DIR)Topic.cpp\
+\
+$(CMD_DIR)Kick.cpp\
+\
+$(CMD_DIR)Part.cpp\
+\
+$(CMD_DIR)Quit.cpp\
+\
+
+HEAD = ./includes/Channel.hpp ./includes/Replies.hpp
 
 OBJS = $(SRCS:.cpp=.o)
 

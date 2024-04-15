@@ -1,33 +1,44 @@
-#include "../server.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Pass.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/14 17:52:03 by ranki             #+#    #+#             */
+/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/Server.hpp"
 #include <poll.h>
 #include <signal.h>
-#include "../client.hpp"
+#include "../includes/Client.hpp"
 
 std::string removeNewline2(std::string str)
 {
 	str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+	str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
 	return str;
 }
 
 // PASS
-void Server::PASS_client(int fd, std::string cmd)
+void Server::PASS_Client(int fd, std::string cmd)
 {
 	Client *cli = GetClient(fd);
 
 	if (cmd.empty())
-		sendResponse(RED + ERR_NOTENOUGHPARAM(std::string("*")) + WHI, fd);
+		sendResponse(ERR_NOTENOUGHPARAM(std::string("*")), fd);
 	else if (!cli->isRegistered())
 	{
 		std::string pass = cmd;
 		if (removeNewline2(pass) == password)
 		{
 			cli->setRegistered(true);
-			std::string response = GRE + std::string("YOU ARE NOW REGISTERED") + WHI + std::string(CRLF);
-			sendResponse(response, fd);
 		}
 		else
-			sendResponse(RED + ERR_INCORPASS(std::string("*")) + WHI, fd);
+			sendResponse(ERR_INCORPASS(std::string("*")), fd);
 	}
 	else
-		sendResponse(RED + ERR_ALREADYREGISTERED(GetClient(fd)->getNickname()) + WHI, fd);
+		sendResponse(ERR_ALREADYREGISTERED(GetClient(fd)->getNickname()), fd);
 }
