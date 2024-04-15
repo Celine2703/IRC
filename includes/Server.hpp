@@ -34,7 +34,9 @@
 #include "Replies.hpp"
 #include <algorithm>
 #include <ctime>
-#include <sstream> 
+#include <sstream>
+#include <cerrno>
+#include <cstdio>
 
 
 

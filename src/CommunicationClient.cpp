@@ -26,7 +26,10 @@ void Server::ReceiveData(int fd)
 	Client *cli = GetClient(fd);
 	if (bytes <= -1)
 	{
-		throw(std::runtime_error("faild to receive data error code : " + std::to_string(errno) + " : " + strerror(errno) + "\n"));
+		perror("DEBUG");
+		std::cerr << "error code : " << errno << "\n";
+
+		throw(std::runtime_error("faild to receive data \n"));
 	}
 	if (bytes == 0)
 	{
