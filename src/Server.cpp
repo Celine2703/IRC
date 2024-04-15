@@ -57,8 +57,7 @@ void Server::Start(std::string password, int port)
 						} catch (std::runtime_error &e) {
 							std::cerr << e.what() << std::endl;
 							std::cout << "Client error" << std::endl;
-							ClearClients(PollFds[i].fd);
-							close(PollFds[i].fd);
+							
 						}
 					}
 				}

@@ -28,7 +28,9 @@ void Server::ReceiveData(int fd)
 	{
 		perror("DEBUG");
 		std::cerr << "error code : " << errno << "\n";
-
+		std::cerr << "fd : " << fd << "\n";
+		std::cerr << "bytes " << bytes << "\n";
+		std::cerr << "buffer : " << buffer << "\n";
 		throw(std::runtime_error("faild to receive data \n"));
 	}
 	if (bytes == 0)
