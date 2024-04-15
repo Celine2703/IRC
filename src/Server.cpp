@@ -52,7 +52,14 @@ void Server::Start(std::string password, int port)
 					}
 					else
 					{
-						ReceiveData(PollFds[i].fd);
+						try {
+							ReceiveData(PollFds[i].fd);
+						} catch (std::runtime_error &e) {
+							std::cerr << e.what() << std::endl;
+							std::cout << "Client error" << std::endl;
+							ClearClients(PollFds[i].fd);
+							close(PollFds[i].fd);
+						}
 					}
 				}
 			}
