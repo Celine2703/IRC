@@ -6,7 +6,7 @@ SRCS = irc.cpp client.cpp server.cpp \
 \
 ./commands/User.cpp \
 
-
+HEAD = channel.hpp Join.hpp Nick.hpp Part.hpp Pass.hpp Quit.hpp User.hpp
 
 OBJS = $(SRCS:.cpp=.o)
 
