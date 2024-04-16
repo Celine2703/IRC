@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cmartin- <cmartin-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:55:27 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:32:02 by cmartin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void Server::Start(std::string password, int port)
 		while (Server::getServerRunning())
 		{
 			
-			if ((poll(&PollFds[0], PollFds.size(), 100) == -1) && Server::getServerRunning()) //-> wait for an event
+			if ((poll(&PollFds[0], PollFds.size(), -1) == -1) && Server::getServerRunning()) //-> wait for an event
 				throw(std::runtime_error("poll() faild"));
 			if (!Server::getServerRunning())
 				break;
