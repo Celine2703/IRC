@@ -14,7 +14,7 @@
 #include <poll.h>
 #include <signal.h>
 #include "Client.hpp"
-// bool Server::ServerRunning = true;
+ bool Server::ServerRunning = false;
 
 Server::Server()
 {
@@ -37,11 +37,13 @@ void Server::Start(std::string password, int port)
 		std::cout << "waiting to accept a connection" << std::endl;
 
 		this->password = password;
-		while (true)
+		SetserverRunning(true);
+		while (Server::getServerRunning())
 		{
-			if ((poll(&PollFds[0], PollFds.size(), -1) == -1)) //-> wait for an event
+			if ((poll(&PollFds[0], PollFds.size(), -1) == -1) && Server::getServerRunning()) //-> wait for an event
 				throw(std::runtime_error("poll() faild"));
-
+			if (!Server::getServerRunning())
+				break;
 			for (size_t i = 0; i < PollFds.size(); i++)
 			{
 				if (PollFds[i].revents & POLLIN) //-> check if the event is POLLIN
@@ -71,6 +73,7 @@ void Server::Start(std::string password, int port)
 		std::cerr << e.what() << std::endl;
 		std::cout << "Server is shutting down" << std::endl;
 	}
+	std::cout << "Server is shutting down correctly" << std::endl;
 }
 
 std::string Server::removeFirstBackLine(std::string str)
@@ -162,4 +165,14 @@ void Server::serverInit()
 	}
 
 	std::cout << "Server is running on port " << Port << std::endl;
+}
+
+void Server::SetserverRunning(bool value)
+{
+	ServerRunning = value;
+}
+
+bool Server::getServerRunning()
+{
+	return ServerRunning;
 }

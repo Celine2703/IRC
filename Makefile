@@ -63,7 +63,7 @@ OBJS = $(SRCS:.cpp=.o)
 
 NAME = ircserv
 
-CC = c++ -Wall -Wextra -Werror -Iincludes -std=c++98
+CC = c++ -Wall -Wextra -Werror -Iincludes -std=c++98 -g
 
 all: $(NAME)
 

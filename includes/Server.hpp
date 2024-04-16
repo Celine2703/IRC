@@ -137,6 +137,8 @@ public:
 	Client						*findClientByFd(int fd);
 	Client						*findClientByNick(std::string nickname);
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
+	static void					SetserverRunning(bool value);
+	static bool					getServerRunning();
 
 };
 
