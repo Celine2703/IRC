@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 19:04:14 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:55:13 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:34:52 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,5 @@ void Server::PING(std::string &cmd, int &fd)
 {
     (void)cmd;
     
-    sendResponse("PONG\n", fd);
+    sendResponse(":PONG\n", fd);
 }

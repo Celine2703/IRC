@@ -6,60 +6,11 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:08 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:30:07 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
-
-// Recherche une commande spécifique et extrait la chaîne suivante
-void FindQ(std::string cmd, std::string tofind, std::string &str)
-{
-    size_t i = 0;
-    for (; i < cmd.size(); i++)
-    {
-        if (cmd[i] != ' ')
-        {
-            std::string tmp;
-            for (; i < cmd.size() && cmd[i] != ' '; i++)
-                tmp += cmd[i];
-            if (tmp == tofind)
-                break;
-            else
-                tmp.clear();
-        }
-    }
-    if (i < cmd.size())
-        str = cmd.substr(i);
-    i = 0;
-    for (; i < str.size() && str[i] == ' '; i++)
-        ;
-    str = str.substr(i);
-}
-
-// Divise une commande et retourne la raison formatée pour quitter
-std::string SplitQuit(std::string cmd)
-{
-    std::istringstream stm(cmd);
-    std::string reason, str;
-    stm >> str;
-    FindQ(cmd, str, reason);
-    if (reason.empty())
-        return std::string("Quit");
-    if (reason[0] != ':')
-    { // if the message does not start with ':'
-        for (size_t i = 0; i < reason.size(); i++)
-        {
-            if (reason[i] == ' ')
-            {
-                reason.erase(reason.begin() + i, reason.end());
-                break;
-            }
-        }
-        reason.insert(reason.begin(), ':');
-    }
-    return reason;
-}
 
 // Supprime un file descriptor de la liste de polling
 void Server::removeFd(int fd)
@@ -117,10 +68,68 @@ void Server::rmChannels(int fd)
     }
 }
 
+// Recherche une commande spécifique et extrait la chaîne suivante
+void FindCommandQuit(std::string cmd, std::string tofind, std::string &str)
+{
+    size_t i = 0;
+    for (; i < cmd.size(); i++)
+    {
+        if (cmd[i] != ' ')
+        {
+            std::string tmp;
+            for (; i < cmd.size() && cmd[i] != ' '; i++)
+                tmp += cmd[i];
+            if (tmp == tofind)
+                break;
+            else
+                tmp.clear();
+        }
+    }
+    if (i < cmd.size())
+        str = cmd.substr(i);
+    i = 0;
+    for (; i < str.size() && str[i] == ' '; i++)
+        ;
+    str = str.substr(i);
+}
+
+// Divise une commande et retourne la raison formatée pour quitter
+std::string tokenizationCommandQuit(std::string cmd)
+{
+    std::istringstream stm(cmd);
+    std::string reason, str;
+    stm >> str;
+    FindCommandQuit(cmd, str, reason);
+    if (reason.empty())
+        return std::string("Quit");
+    if (reason[0] != ':')
+    { // if the message does not start with ':'
+        for (size_t i = 0; i < reason.size(); i++)
+        {
+            if (reason[i] == ' ')
+            {
+                reason.erase(reason.begin() + i, reason.end());
+                break;
+            }
+        }
+        reason.insert(reason.begin(), ':');
+    }
+    return reason;
+}
+
+// Méthode principale qui utilise les sous-méthodes pour traiter la commande QUIT.
+void Server::QUIT(std::string cmd, int fd)
+{
+    std::string reason = extractQuitReason(cmd);
+    removeClientChannel(fd, reason);
+    showDisconnectionClient(fd);
+    freeClient(fd);
+}
+
 // Extraire la raison du QUIT à partir de la commande.
 std::string Server::extractQuitReason(std::string cmd)
 {
-    return SplitQuit(cmd);
+    return tokenizationCommandQuit(cmd);
 }
 
 // Gérer la suppression du client des canaux et l'envoi des notifications.
@@ -165,13 +174,4 @@ void Server::freeClient(int fd)
     removeClient(fd);
     removeFd(fd);
     close(fd);
-}
-
-// Méthode principale qui utilise les sous-méthodes pour traiter la commande QUIT.
-void Server::QUIT(std::string cmd, int fd)
-{
-    std::string reason = extractQuitReason(cmd);
-    removeClientChannel(fd, reason);
-    showDisconnectionClient(fd);
-    freeClient(fd);
 }

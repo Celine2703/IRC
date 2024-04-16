@@ -6,7 +6,7 @@
 /*   By: cmartin- <cmartin-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 22:32:02 by cmartin-         ###   ########.fr       */
+/*   Updated: 2024/04/16 23:13:51 by cmartin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void Server::Start(std::string password, int port)
 		while (Server::getServerRunning())
 		{
 			
-			if ((poll(&PollFds[0], PollFds.size(), -1) == -1) && Server::getServerRunning()) //-> wait for an event
+			if ((poll(&PollFds[0], PollFds.size(), 10) == -1) && Server::getServerRunning()) //-> wait for an event
 				throw(std::runtime_error("poll() faild"));
 			if (!Server::getServerRunning())
 				break;
@@ -69,7 +69,8 @@ void Server::Start(std::string password, int port)
 				if (PollFds[i].revents & POLLHUP)
 				{
 					std::cerr << "CLIENT IS POLLING HUP"<< std::endl;
-					QUIT("", PollFds[i].fd);
+					clearClients(PollFds[i].fd);
+					close(PollFds[i].fd);
 				}
 			}
 		}
