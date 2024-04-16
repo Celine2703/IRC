@@ -6,31 +6,33 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 18:39:22 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:18:50 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-// Renvoie l'heure actuelle sous forme de chaîne de caractères
-std::string Server::tTopic()
+// Traite la commande TOPIC
+void Server::TOPIC(std::string &cmd, int &fd)
 {
-    std::time_t current = std::time(NULL);
-    std::stringstream res;
+    std::vector<std::string> scmd = tokenizationCommand(cmd);
+    if (!hasSufficientParameters(scmd, fd))
+        return;
 
-    res << current;
-    return res.str();
-}
+    std::string channelName = scmd[1].substr(1);
+    Channel *channel = validateChannel(channelName, fd);
+    if (!channel)
+        return;
 
-// Renvoie le sujet d'un canal
-std::string Server::getTopic(std::string &input)
-{
-    size_t pos = input.find(":");
-    if (pos == std::string::npos)
+    if (scmd.size() == 2)
     {
-        return "";
+        handleTopicDisplay(channel, channelName, fd);
     }
-    return input.substr(pos);
+    else
+    {
+        std::string topic = cmd.substr(cmd.find_first_of(':') + 1);
+        updateTopic(channel, channelName, topic, fd);
+    }
 }
 
 // Renvoie la position de deux points dans une commande
@@ -100,25 +102,23 @@ void Server::updateTopic(Channel *channel, const std::string &channelName, const
     }
 }
 
-// Traite la commande TOPIC
-void Server::TOPIC(std::string &cmd, int &fd)
+// Renvoie l'heure actuelle sous forme de chaîne de caractères
+std::string Server::tTopic()
 {
-    std::vector<std::string> scmd = tokenizationCommand(cmd);
-    if (!hasSufficientParameters(scmd, fd))
-        return;
+    std::time_t current = std::time(NULL);
+    std::stringstream res;
 
-    std::string channelName = scmd[1].substr(1);
-    Channel *channel = validateChannel(channelName, fd);
-    if (!channel)
-        return;
+    res << current;
+    return res.str();
+}
 
-    if (scmd.size() == 2)
+// Renvoie le sujet d'un canal
+std::string Server::getTopic(std::string &input)
+{
+    size_t pos = input.find(":");
+    if (pos == std::string::npos)
     {
-        handleTopicDisplay(channel, channelName, fd);
+        return "";
     }
-    else
-    {
-        std::string topic = cmd.substr(cmd.find_first_of(':') + 1);
-        updateTopic(channel, channelName, topic, fd);
-    }
+    return input.substr(pos);
 }

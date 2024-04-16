@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:34:47 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:27:04 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,11 @@ public:
 	void						removeClientChannel(int fd, const std::string& reason);
 	void						showDisconnectionClient(int fd);
 	void						freeClient(int fd);
+	void						splitStringByComma(std::string str1, std::vector<std::string>& tmp);
+	void						removeEmptyStrings(std::vector<std::string>& tmp);
+	void						sendMessageToChannel(const std::string& channel, const std::string& message, int fd);
+	void						sendMessageToUser(const std::string& user, const std::string& message, int fd);
+	void						distributeMessages(const std::vector<std::string>& recipients, const std::string& message, int fd);
 	
 	static void					signalHandler(int signal);
 
@@ -117,6 +122,9 @@ public:
 	std::string					tokenizationKickCommand(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
 	std::string					extractReason(std::string& reason);
 	std::string					extractQuitReason(std::string cmd);
+	std::string					initialSplitAndValidate(std::string cmd, std::vector<std::string>& tmp);
+	std::string					SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp);
+	std::string					adjustOriginalString(std::string str);
 	
 	bool						isValidNickname(std::string& nickname);
 	bool						nicknameAlreadyUseByClient(std::string& nickname);
@@ -126,6 +134,7 @@ public:
 	bool						checkChannelMembershipAndRights(std::vector<std::string>& scmd, int& fd);
 	bool						checkParameters(std::vector<std::string>& scmd, int& fd);
 	bool						handleChannelLimitsAndInvitations(std::vector<std::string>& scmd, int& fd);
+	bool						validateMessageAndRecipients(const std::vector<std::string>& tmp, const std::string& message, int fd);
 	
 	int							tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
 	int							getPositionColon(std::string &cmd);
