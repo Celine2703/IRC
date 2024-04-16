@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 18:39:22 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:28:55 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ bool Server::hasSufficientParameters(const std::vector<std::string> &scmd, int f
 {
     if (scmd.size() < 2)
     {
-        senderror(461, findClientByFd(fd)->getNickname(), fd, " :Not enough parameters\r\n");
+        senderror(461, findClientByFd(fd)->getNickname(), fd, " :Not enough parameters\n");
         return false;
     }
     return true;
@@ -59,12 +59,12 @@ Channel *Server::validateChannel(const std::string &channelName, int fd)
     Channel *channel = findChannelByName(channelName);
     if (!channel)
     {
-        senderror(403, "#" + channelName, fd, " :No such channel\r\n");
+        senderror(403, "#" + channelName, fd, " :No such channel\n");
         return NULL;
     }
     if (!channel->getClientInChannelByFd(fd) && !channel->getAdmin(fd))
     {
-        senderror(442, "#" + channelName, fd, " :You're not on that channel\r\n");
+        senderror(442, "#" + channelName, fd, " :You're not on that channel\n");
         return NULL;
     }
     return channel;
@@ -75,12 +75,12 @@ void Server::handleTopicDisplay(Channel *channel, const std::string &channelName
 {
     if (channel->GetTopicName().empty())
     {
-        sendResponse(": 331 " + findClientByFd(fd)->getNickname() + " #" + channelName + " :No topic is set\r\n", fd);
+        sendResponse(": 331 " + findClientByFd(fd)->getNickname() + " #" + channelName + " :No topic is set\n", fd);
     }
     else
     {
-        sendResponse(": 332 " + findClientByFd(fd)->getNickname() + " #" + channelName + " " + channel->GetTopicName() + "\r\n", fd);
-        sendResponse(": 333 " + findClientByFd(fd)->getNickname() + " #" + channelName + " " + findClientByFd(fd)->getNickname() + " " + channel->GetTime() + "\r\n", fd);
+        sendResponse(": 332 " + findClientByFd(fd)->getNickname() + " #" + channelName + " " + channel->GetTopicName() + "\n", fd);
+        sendResponse(": 333 " + findClientByFd(fd)->getNickname() + " #" + channelName + " " + findClientByFd(fd)->getNickname() + " " + channel->GetTime() + "\n", fd);
     }
 }
 
@@ -89,13 +89,13 @@ void Server::updateTopic(Channel *channel, const std::string &channelName, const
 {
     if (channel->getTopicRestriction() && !channel->getAdmin(fd))
     {
-        senderror(482, "#" + channelName, fd, " :You're not a channel operator\r\n");
+        senderror(482, "#" + channelName, fd, " :You're not a channel operator\n");
     }
     else
     {
         channel->SetTopicName(topic);
         channel->SetTime(tTopic());
-        std::string rpl = ":" + findClientByFd(fd)->getNickname() + "!" + findClientByFd(fd)->getUsername() + "@localhost TOPIC #" + channelName + " :" + topic + "\r\n";
+        std::string rpl = ":" + findClientByFd(fd)->getNickname() + "!" + findClientByFd(fd)->getUsername() + "@localhost TOPIC #" + channelName + " :" + topic + "\n";
         channel->sendToAll(rpl);
     }
 }

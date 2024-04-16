@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:06 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:50:09 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,13 @@ void Server::checkChannelsForClients(std::vector<std::string> &tmp, int fd)
 			tmp[i].erase(tmp[i].begin());
 			if (!findChannelByName(tmp[i]))
 			{
-				senderror(401, "#" + tmp[i], findClientByFd(fd)->getFd(), " :No such nick/channel\r\n");
+				senderror(401, "#" + tmp[i], findClientByFd(fd)->getFd(), " :No such nick/channel\n");
 				tmp.erase(tmp.begin() + i);
 				i--;
 			}
 			else if (!findChannelByName(tmp[i])->findClientByFdInChannel(findClientByFd(fd)->getNickname()))
 			{
-				senderror(404, findClientByFd(fd)->getNickname(), "#" + tmp[i], findClientByFd(fd)->getFd(), " :Cannot send to channel\r\n");
+				senderror(404, findClientByFd(fd)->getNickname(), "#" + tmp[i], findClientByFd(fd)->getFd(), " :Cannot send to channel\n");
 				tmp.erase(tmp.begin() + i);
 				i--;
 			}
@@ -119,7 +119,7 @@ void Server::checkChannelsForClients(std::vector<std::string> &tmp, int fd)
 		{
 			if (!findClientByNick(tmp[i]))
 			{
-				senderror(401, tmp[i], findClientByFd(fd)->getFd(), " :No such nick/channel\r\n");
+				senderror(401, tmp[i], findClientByFd(fd)->getFd(), " :No such nick/channel\n");
 				tmp.erase(tmp.begin() + i);
 				i--;
 			}

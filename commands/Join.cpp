@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:56 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:27:27 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &
         {
             // Envoi d'une réponse d'erreur si le nom de canal est invalide
             // il faut créer un channel quand ce dernier nexiste oas
-            sendResponse("403 " + findClientByFd(fd)->getNickname() + " " + token[i].first + " :No such channel\r\n", findClientByFd(fd)->getFd());
+            sendResponse("403 " + findClientByFd(fd)->getNickname() + " " + token[i].first + " :No such channel\n", findClientByFd(fd)->getFd());
             token.erase(token.begin() + i--);
         }
         else
@@ -119,14 +119,14 @@ void Server::isRealChannel(std::vector<std::pair<std::string, std::string> > &to
         return;
     if (findClientByName(findClientByFd(fd)->getNickname()) >= 10)
     {
-        senderror(405, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :You have joined too many channels\r\n");
+        senderror(405, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :You have joined too many channels\n");
         return;
     }
     if (!this->channels[j].GetPassword().empty() && this->channels[j].GetPassword() != token[i].second)
     {
         if (!IsInvited(findClientByFd(fd), token[i].first, 0))
         {
-            senderror(475, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+k) - bad key\r\n");
+            senderror(475, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+k) - bad key\n");
             return;
         }
     }
@@ -134,13 +134,13 @@ void Server::isRealChannel(std::vector<std::pair<std::string, std::string> > &to
     {
         if (!IsInvited(findClientByFd(fd), token[i].first, 1))
         {
-            senderror(473, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+i)\r\n");
+            senderror(473, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+i)\n");
             return;
         }
     }
     if (this->channels[j].GetLimit() && this->channels[j].findClientByFdsNumber() >= this->channels[j].GetLimit())
     {
-        senderror(471, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+l)\r\n");
+        senderror(471, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+l)\n");
         return;
     }
 
@@ -165,7 +165,7 @@ void Server::isNotRealChannel(std::vector<std::pair<std::string, std::string> > 
 {
     if (findClientByName(findClientByFd(fd)->getNickname()) >= 10)
     {
-        senderror(405, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :You have joined too many channels\r\n");
+        senderror(405, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :You have joined too many channels\n");
         return;
     }
     Channel newChannel;
@@ -192,14 +192,14 @@ void Server::JOIN(std::string cmd, int fd)
     // pas de nom de channel
     if (!tokenizationJoin(token, cmd, fd))
     {
-        senderror(461, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Not enough parameters\r\n");
+        senderror(461, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Not enough parameters\n");
         return;
     }
 
     // le Client a deja trop de channel
     if (token.size() > 10)
     {
-        senderror(407, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Too many channels\r\n");
+        senderror(407, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Too many channels\n");
         return;
     }
 

@@ -6,13 +6,13 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:48 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:58:29 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define once
 
-#define CRLF "\r\n"
+#define CRLF "\n"
 
 #define RPL_CONNECTED(nickname) (": 001 " + nickname + " : Welcome to the IRC Server!" + CRLF)
 #define RPL_UMODEIS(hostname, channelname, mode, user) ":" + hostname + " MODE " + channelname + " " + mode + " " + user + CRLF
@@ -23,7 +23,7 @@
 #define RPL_JOINMSG(hostname, ipaddress, channelname) (":" + hostname + "@" + ipaddress + " JOIN #" + channelname + CRLF)
 #define RPL_NAMREPLY(nickname, channelname, Clientslist) (": 353 " + nickname + " @ #" + channelname + " :" + Clientslist + CRLF)
 #define RPL_ENDOFNAMES(nickname, channelname) (": 366 " + nickname + " #" + channelname + " :END of /NAMES list" + CRLF)
-#define RPL_TOPICIS(nickname, channelname, topic) (": 332 " + nickname + " #" + channelname + " :" + topic + "\r\n")
+#define RPL_TOPICIS(nickname, channelname, topic) (": 332 " + nickname + " #" + channelname + " :" + topic + "\n")
 
 ///////// ERRORS ////////////////
 #define ERR_NEEDMODEPARM(channelname, mode) (": 696 #" + channelname + " * You must specify a parameter for the key mode. " + mode + CRLF)
