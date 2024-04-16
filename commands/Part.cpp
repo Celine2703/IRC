@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:01 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:51:06 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:27:27 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ void Server::PART(std::string cmd, int fd)
 {
     std::vector<std::string> tmp;
     std::string reason;
-    if (!VerifyParameters(cmd, tmp, reason, fd))
+    if (!verifyParameters(cmd, tmp, reason, fd))
         return;
 
-    ProcessChannelPart(tmp, reason, fd);
+    partOfChannel(tmp, reason, fd);
 }
 
 void FindPR(std::string cmd, std::string tofind, std::string &str)
@@ -62,7 +62,7 @@ std::string SplitCmdPR(std::string &cmd, std::vector<std::string> &tmp)
 }
 
 // Extrai les noms des canaux à partir d'une chaîne séparée par des virgules.
-void Server::ExtractChannels(std::string &str, std::vector<std::string> &channels)
+void Server::extractChannels(std::string &str, std::vector<std::string> &channels)
 {
     std::string channel;
     for (size_t i = 0; i < str.size(); i++)
@@ -80,7 +80,7 @@ void Server::ExtractChannels(std::string &str, std::vector<std::string> &channel
 }
 
 // Nettoie et valide les noms des canaux, en supprimant les chaînes vides et les caractères spéciaux.
-void Server::CleanChannels(std::vector<std::string> &channels, int fd)
+void Server::cleanChannels(std::vector<std::string> &channels, int fd)
 {
     for (size_t i = 0; i < channels.size(); i++)
     {
@@ -94,14 +94,14 @@ void Server::CleanChannels(std::vector<std::string> &channels, int fd)
         }
         else
         {
-            senderror(403, GetClient(fd)->getNickname(), channels[i], GetClient(fd)->getFD(), " :No such channel\r\n");
+            senderror(403, findClientByFd(fd)->getNickname(), channels[i], findClientByFd(fd)->getFd(), " :No such channel\r\n");
             channels.erase(channels.begin() + i--);
         }
     }
 }
 
 // Normalise la raison en supprimant le préfixe ':' ou en limitant la chaîne au premier espace.
-void Server::NormalizeReason(std::string &reason)
+void Server::getGoodReason(std::string &reason)
 {
     if (reason[0] == ':')
         reason.erase(reason.begin());
@@ -114,7 +114,7 @@ void Server::NormalizeReason(std::string &reason)
 }
 
 // Méthode principale qui utilise les sous-méthodes pour traiter la commande.
-int Server::SplitCmdPart(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd)
+int Server::tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd)
 {
     reason = SplitCmdPR(cmd, tmp);
     if (tmp.size() < 2)
@@ -126,26 +126,26 @@ int Server::SplitCmdPart(std::string cmd, std::vector<std::string> &tmp, std::st
     std::string str = tmp[0];
     tmp.clear();
 
-    ExtractChannels(str, tmp);
-    CleanChannels(tmp, fd);
-    NormalizeReason(reason);
+    extractChannels(str, tmp);
+    cleanChannels(tmp, fd);
+    getGoodReason(reason);
 
     return 1;
 }
 
 // Vérifie si les paramètres nécessaires pour la commande PART sont présents.
-bool Server::VerifyParameters(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd)
+bool Server::verifyParameters(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd)
 {
-    if (!SplitCmdPart(cmd, tmp, reason, fd))
+    if (!tokenizationPartCommand(cmd, tmp, reason, fd))
     {
-        senderror(461, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :Not enough parameters\r\n");
+        senderror(461, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Not enough parameters\r\n");
         return false;
     }
     return true;
 }
 
 // Traite l'action de quitter pour chaque canal spécifié.
-void Server::ProcessChannelPart(std::vector<std::string> &channels, std::string &reason, int fd)
+void Server::partOfChannel(std::vector<std::string> &channels, std::string &reason, int fd)
 {
     for (size_t i = 0; i < channels.size(); i++)
     {
@@ -155,43 +155,43 @@ void Server::ProcessChannelPart(std::vector<std::string> &channels, std::string 
             if (this->channels[j].GetName() == channels[i])
             {
                 flag = true;
-                HandleChannelParticipation(channels[i], reason, fd, j);
+                manageChannelInterraction(channels[i], reason, fd, j);
                 break;
             }
         }
         if (!flag)
-            senderror(403, GetClient(fd)->getNickname(), "#" + channels[i], GetClient(fd)->getFD(), " :No such channel\r\n");
+            senderror(403, findClientByFd(fd)->getNickname(), "#" + channels[i], findClientByFd(fd)->getFd(), " :No such channel\r\n");
     }
 }
 
 // Gère la participation au canal, envoyant les notifications nécessaires et mettant à jour les états des canaux.
-void Server::HandleChannelParticipation(const std::string &channel, const std::string &reason, int fd, size_t channelIndex)
+void Server::manageChannelInterraction(const std::string &channel, const std::string &reason, int fd, size_t channelIndex)
 {
-    if (!channels[channelIndex].get_Client(fd) && !channels[channelIndex].get_admin(fd))
+    if (!channels[channelIndex].getClientInChannelByFd(fd) && !channels[channelIndex].getAdmin(fd))
     {
-        senderror(442, GetClient(fd)->getNickname(), "#" + channel, GetClient(fd)->getFD(), " :You're not on that channel\r\n");
+        senderror(442, findClientByFd(fd)->getNickname(), "#" + channel, findClientByFd(fd)->getFd(), " :You're not on that channel\r\n");
         return;
     }
     std::stringstream ss;
-    ss << ":" << GetClient(fd)->getNickname() << "!~" << GetClient(fd)->getUsername() << "@"
+    ss << ":" << findClientByFd(fd)->getNickname() << "!~" << findClientByFd(fd)->getUsername() << "@"
        << "localhost PART #" << channel;
     if (!reason.empty())
         ss << " :" << reason << "\r\n";
     else
         ss << "\r\n";
 
-    channels[channelIndex].sendTo_all(ss.str());
-    RemoveFromChannel(fd, channelIndex);
+    channels[channelIndex].sendToAll(ss.str());
+    removeFromChannel(fd, channelIndex);
 }
 
 // Retire un utilisateur d'un canal et supprime le canal s'il n'y a plus de membres.
-void Server::RemoveFromChannel(int fd, size_t channelIndex)
+void Server::removeFromChannel(int fd, size_t channelIndex)
 {
-    if (channels[channelIndex].get_admin(channels[channelIndex].GetClientInChannel(GetClient(fd)->getNickname())->getFD()))
-        channels[channelIndex].remove_admin(channels[channelIndex].GetClientInChannel(GetClient(fd)->getNickname())->getFD());
+    if (channels[channelIndex].getAdmin(channels[channelIndex].findClientByFdInChannel(findClientByFd(fd)->getNickname())->getFd()))
+        channels[channelIndex].removeAdmin(channels[channelIndex].findClientByFdInChannel(findClientByFd(fd)->getNickname())->getFd());
     else
-        channels[channelIndex].remove_Client(channels[channelIndex].GetClientInChannel(GetClient(fd)->getNickname())->getFD());
+        channels[channelIndex].removeClient(channels[channelIndex].findClientByFdInChannel(findClientByFd(fd)->getNickname())->getFd());
 
-    if (channels[channelIndex].GetClientsNumber() == 0)
+    if (channels[channelIndex].findClientByFdsNumber() == 0)
         channels.erase(channels.begin() + channelIndex);
 }

@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:51:15 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:19:30 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,9 @@ public:
 	
 	Server();
 	
-	void						ParseCommand(std::string cmd, int fd);
-	void						PASS_Client(int fd, std::string cmd);
-	void						JOIN_Client(std::string cmd, int fd);
+	void						parseCommand(std::string cmd, int fd);
+	void						PASS(int fd, std::string cmd);
+	void						JOIN(std::string cmd, int fd);
 	void						PRIVMSG(std::string cmd, int fd);
 	void						TOPIC(std::string &cmd, int &fd);
 	void						KICK(std::string cmd, int fd);
@@ -75,58 +75,59 @@ public:
 	void						PING(std::string &cmd, int &fd);
 	void						INVITE(std::string &cmd, int &fd);
 	void						Start(std::string password, int port);
+	
 	void						ServerSocket();
-	void						AcceptClient();
-	void						ReceiveData(int fd);
-	void						CloseFds();
-	void						ClearClients(int fd);
-	void						ServerInit();
+	void						acceptClient();
+	void						receiveData(int fd);
+	void						closeFds();
+	void						clearClients(int fd);
+	void						serverInit();
 	void						sendResponse(std::string response, int fd);
 	void						setClientNickname(std::string cmd, int fd);
 	void						setClientUsername(std::string cmd, int fd);
 	void						senderror(int code, std::string Clientname, int fd, std::string msg);
 	void 						senderror(int code, std::string Clientname, std::string channelname, int fd, std::string msg);
-	void						ExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd);
-	void						NotExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int fd);
-	void						CheckForChannels_Clients(std::vector<std::string> &tmp, int fd);
+	void						isRealChannel(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd);
+	void						isNotRealChannel(std::vector<std::pair<std::string, std::string> > &token, int i, int fd);
+	void						checkChannelsForClients(std::vector<std::string> &tmp, int fd);
 	void						handleTopicDisplay(Channel* channel, const std::string& channelName, int fd) ;
 	void						updateTopic(Channel* channel, const std::string& channelName, const std::string& topic, int fd);
-    void						CleanChannelNames(std::vector<std::string>& tmp, int fd);
-    void						SplitChannelNames(const std::string& str, std::vector<std::string>& tmp);
-    void						ProcessKickForChannel(const std::string& user, const std::string& reason, std::vector<std::string>& tmp, int fd);
-	void						CleanChannels(std::vector<std::string> &channels, int fd);
-	void						NormalizeReason(std::string &reason);
-	void 						ExtractChannels(std::string &str, std::vector<std::string> &channels);
-	void						ProcessChannelPart(std::vector<std::string>& channels, std::string& reason, int fd);
-	void						HandleChannelParticipation(const std::string& channel, const std::string& reason, int fd, size_t channelIndex);
-	void						RemoveFromChannel(int fd, size_t channelIndex);
-	void						RemoveFds(int fd);
-	void						RemoveClient(int fd);
-	void						RmChannels(int fd);
-	void						ProcessChannelParticipation(int fd, const std::string& reason);
-	void						NotifyDisconnection(int fd);
-	void						CleanupResources(int fd);
-	static void					SignalHandler(int signal);
+    void						cleanAllChannelNames(std::vector<std::string>& tmp, int fd);
+    void						splitChannelNames(const std::string& str, std::vector<std::string>& tmp);
+    void						kickOutChannel(const std::string& user, const std::string& reason, std::vector<std::string>& tmp, int fd);
+	void						cleanChannels(std::vector<std::string> &channels, int fd);
+	void						getGoodReason(std::string &reason);
+	void 						extractChannels(std::string &str, std::vector<std::string> &channels);
+	void						partOfChannel(std::vector<std::string>& channels, std::string& reason, int fd);
+	void						manageChannelInterraction(const std::string& channel, const std::string& reason, int fd, size_t channelIndex);
+	void						removeFromChannel(int fd, size_t channelIndex);
+	void						removeFd(int fd);
+	void						removeClient(int fd);
+	void						rmChannels(int fd);
+	void						removeClientChannel(int fd, const std::string& reason);
+	void						showDisconnectionClient(int fd);
+	void						freeClient(int fd);
+	static void					signalHandler(int signal);
 	std::string					removeFirstBackLine(std::string);
 	std::string					removeAllNewLines(std::string);
 	std::string					tTopic();
-	std::string					gettopic(std::string &input);
-	std::string					SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
-	std::string					ExtractReason(std::string& reason);
-	std::string					ExtractQuitReason(std::string cmd);
-	bool						is_validNickname(std::string& nickname);
+	std::string					getTopic(std::string &input);
+	std::string					tokenizationKickCommand(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
+	std::string					extractReason(std::string& reason);
+	std::string					extractQuitReason(std::string cmd);
+	bool						isValidNickname(std::string& nickname);
 	bool						nicknameAlreadyUseByClient(std::string& nickname);
 	bool						hasSufficientParameters(const std::vector<std::string>& scmd, int fd);
-	bool						CheckParameters(const std::string& user, int fd);
-	bool						VerifyParameters(std::string cmd, std::vector<std::string>& tmp, std::string& reason, int fd);
-	int							SplitCmdPart(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
-	int							getpos(std::string &cmd);
-	int							SearchForClients(std::string nickname);
+	bool						checkParameters(const std::string& user, int fd);
+	bool						verifyParameters(std::string cmd, std::vector<std::string>& tmp, std::string& reason, int fd);
+	int							tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
+	int							getPositionColon(std::string &cmd);
+	int							findClientByName(std::string nickname);
 	int 						tokenizationJoin(std::vector< std::pair <std::string, std::string> > &token, std::string cmd, int fd);
-	Channel						*GetChannel(std::string name);
+	Channel						*findChannelByName(std::string name);
 	Channel						*validateChannel(const std::string& channelName, int fd);
-	Client						*GetClient(int fd);
-	Client						*GetClientNick(std::string nickname);
+	Client						*findClientByFd(int fd);
+	Client						*findClientByNick(std::string nickname);
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
 	static void					SetserverRunning(bool value);
 

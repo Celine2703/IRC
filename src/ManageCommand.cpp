@@ -6,20 +6,20 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:23:43 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-void Server::ParseCommand(std::string cmd, int fd)
+void Server::parseCommand(std::string cmd, int fd)
 {
 	if (cmd.empty())
 		return;
 
-	if (cmd == "CAP LS" && GetClient(fd)->isFirstMessage())
+	if (cmd == "CAP LS" && findClientByFd(fd)->isFirstMessage())
 	{
-		GetClient(fd)->setFirstMessage(false);
+		findClientByFd(fd)->setFirstMessage(false);
 		return;
 	}
 
@@ -27,7 +27,7 @@ void Server::ParseCommand(std::string cmd, int fd)
 
 	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass"))
 	{
-		this->PASS_Client(fd, tokens[1]);
+		this->PASS(fd, tokens[1]);
 	}
 	else if (tokens.size() && (tokens[0] == "NICK" || tokens[0] == "nick"))
 	{
@@ -39,7 +39,7 @@ void Server::ParseCommand(std::string cmd, int fd)
 	}
 	else if (tokens.size() && (tokens[0] == "JOIN" || tokens[0] == "join"))
 	{
-		JOIN_Client(cmd, fd);
+		JOIN(cmd, fd);
 	}
 	else if (tokens.size() && (tokens[0] == "PRIVMSG" || tokens[0] == "privmsg"))
 	{

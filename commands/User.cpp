@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:34 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 void Server::setClientUsername(std::string cmd, int fd)
 {
 
-	Client *cli = GetClient(fd);
+	Client *cli = findClientByFd(fd);
 	// if ((cli && cmd.size() < 5))
 	// {
 	// 	sendResponse(ERR_NOTENOUGHPARAM(cli->getNickname()), fd);

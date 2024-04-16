@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:37 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:20:30 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:21:37 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ public:
 	void	clearBuffer();
 
 // Getters and setters 
-	int				getFD();
-	void			setFD(int fd);
-	void			setIP(std::string IP_address);
+	int				getFd();
+	void			setFd(int fd);
+	void			setIp(std::string IP_address);
     const			std::string& getNickname() const;
     void			setNickname(const std::string& nickname);
     const			std::string& getUsername() const;

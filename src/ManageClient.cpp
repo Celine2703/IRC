@@ -6,13 +6,13 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:24 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:58:12 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:21:19 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-Client *Server::GetClientNick(std::string nickname)
+Client *Server::findClientByNick(std::string nickname)
 {
 	for (size_t i = 0; i < this->Clients.size(); i++)
 	{
@@ -22,7 +22,7 @@ Client *Server::GetClientNick(std::string nickname)
 	return NULL;
 }
 
-void Server::ClearClients(int fd)
+void Server::clearClients(int fd)
 {
 	for (size_t i = 0; i < Clients.size(); i++)
 	{
@@ -34,7 +34,7 @@ void Server::ClearClients(int fd)
 	}
 	for (size_t i = 0; i < Clients.size(); i++)
 	{
-		if (Clients[i].getFD() == fd)
+		if (Clients[i].getFd() == fd)
 		{
 			Clients.erase(Clients.begin() + i);
 			break;
@@ -42,23 +42,23 @@ void Server::ClearClients(int fd)
 	}
 }
 
-Client *Server::GetClient(int fd)
+Client *Server::findClientByFd(int fd)
 {
 	for (size_t i = 0; i < this->Clients.size(); i++)
 	{
-		if (this->Clients[i].getFD() == fd)
+		if (this->Clients[i].getFd() == fd)
 			return &this->Clients[i];
 	}
 	return NULL;
 }
 
 // Fonction pour rechercher les Clients dans tous les canaux par leur surnom
-int Server::SearchForClients(std::string nickname)
+int Server::findClientByName(std::string nickname)
 {
 	int count = 0;
 	for (size_t i = 0; i < this->channels.size(); i++)
 	{
-		if (this->channels[i].GetClientInChannel(nickname))
+		if (this->channels[i].findClientByFdInChannel(nickname))
 			count++;
 	}
 	return count;

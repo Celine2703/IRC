@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:54:57 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:21:37 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,13 @@ void Server::Start(std::string password, int port)
 				{
 					if (PollFds[i].fd == ServerSocketFd) //-> check if the event is from the Server socket
 					{
-						AcceptClient();
+						acceptClient();
 					}
 					else
 					{
 						try
 						{
-							ReceiveData(PollFds[i].fd);
+							receiveData(PollFds[i].fd);
 						}
 						catch (std::runtime_error &e)
 						{
@@ -93,7 +93,7 @@ std::string Server::removeAllNewLines(std::string str)
 	return str;
 }
 
-void Server::AcceptClient()
+void Server::acceptClient()
 {
 	Client NewClient;
 	struct sockaddr_in ClientAdd;
@@ -116,8 +116,8 @@ void Server::AcceptClient()
 	NewPoll.events = POLLIN;
 	NewPoll.revents = 0;
 
-	NewClient.setFD(ClientSocketFd);
-	NewClient.setIP(inet_ntoa(ClientAdd.sin_addr));
+	NewClient.setFd(ClientSocketFd);
+	NewClient.setIp(inet_ntoa(ClientAdd.sin_addr));
 	this->Clients.push_back(NewClient);
 	this->PollFds.push_back(NewPoll);
 	std::cout << "Client connected" << std::endl;
@@ -152,7 +152,7 @@ void Server::ServerSocket()
 	PollFds.push_back(NewPoll);	 //-> add the Server socket to the pollfd
 }
 
-void Server::ServerInit()
+void Server::serverInit()
 {
 	try
 	{

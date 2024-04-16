@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:03 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ std::string removeNewline2(std::string str)
 }
 
 // PASS
-void Server::PASS_Client(int fd, std::string cmd)
+void Server::PASS(int fd, std::string cmd)
 {
-	Client *cli = GetClient(fd);
+	Client *cli = findClientByFd(fd);
 
 	if (cmd.empty())
 		sendResponse(ERR_NOTENOUGHPARAM(std::string("*")), fd);
@@ -40,5 +40,5 @@ void Server::PASS_Client(int fd, std::string cmd)
 			sendResponse(ERR_INCORPASS(std::string("*")), fd);
 	}
 	else
-		sendResponse(ERR_ALREADYREGISTERED(GetClient(fd)->getNickname()), fd);
+		sendResponse(ERR_ALREADYREGISTERED(findClientByFd(fd)->getNickname()), fd);
 }

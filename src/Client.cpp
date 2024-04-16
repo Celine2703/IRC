@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:18 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:21:20 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:21:37 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,17 @@ Client::Client()
     firstMessage = true;
 }
 
-int Client::getFD()
+int Client::getFd()
 {
     return Fd;
 }
 
-void Client::setFD(int fd)
+void Client::setFd(int fd)
 {
     this->Fd = fd;
 }
 
-void Client::setIP(std::string IP_address)
+void Client::setIp(std::string IP_address)
 {
     this->IPAddress = IP_address;
 }

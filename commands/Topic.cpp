@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 18:39:22 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:56:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:28:55 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ std::string Server::tTopic()
 }
 
 // Renvoie le sujet d'un canal
-std::string Server::gettopic(std::string &input)
+std::string Server::getTopic(std::string &input)
 {
     size_t pos = input.find(":");
     if (pos == std::string::npos)
@@ -34,7 +34,7 @@ std::string Server::gettopic(std::string &input)
 }
 
 // Renvoie la position de deux points dans une commande
-int Server::getpos(std::string &cmd)
+int Server::getPositionColon(std::string &cmd)
 {
     for (int i = 0; i < (int)cmd.size(); i++)
         if (cmd[i] == ':' && (cmd[i - 1] == 32))
@@ -47,7 +47,7 @@ bool Server::hasSufficientParameters(const std::vector<std::string> &scmd, int f
 {
     if (scmd.size() < 2)
     {
-        senderror(461, GetClient(fd)->getNickname(), fd, " :Not enough parameters\r\n");
+        senderror(461, findClientByFd(fd)->getNickname(), fd, " :Not enough parameters\r\n");
         return false;
     }
     return true;
@@ -56,13 +56,13 @@ bool Server::hasSufficientParameters(const std::vector<std::string> &scmd, int f
 // Valide l'existence d'un canal
 Channel *Server::validateChannel(const std::string &channelName, int fd)
 {
-    Channel *channel = GetChannel(channelName);
+    Channel *channel = findChannelByName(channelName);
     if (!channel)
     {
         senderror(403, "#" + channelName, fd, " :No such channel\r\n");
         return NULL;
     }
-    if (!channel->get_Client(fd) && !channel->get_admin(fd))
+    if (!channel->getClientInChannelByFd(fd) && !channel->getAdmin(fd))
     {
         senderror(442, "#" + channelName, fd, " :You're not on that channel\r\n");
         return NULL;
@@ -75,19 +75,19 @@ void Server::handleTopicDisplay(Channel *channel, const std::string &channelName
 {
     if (channel->GetTopicName().empty())
     {
-        sendResponse(": 331 " + GetClient(fd)->getNickname() + " #" + channelName + " :No topic is set\r\n", fd);
+        sendResponse(": 331 " + findClientByFd(fd)->getNickname() + " #" + channelName + " :No topic is set\r\n", fd);
     }
     else
     {
-        sendResponse(": 332 " + GetClient(fd)->getNickname() + " #" + channelName + " " + channel->GetTopicName() + "\r\n", fd);
-        sendResponse(": 333 " + GetClient(fd)->getNickname() + " #" + channelName + " " + GetClient(fd)->getNickname() + " " + channel->GetTime() + "\r\n", fd);
+        sendResponse(": 332 " + findClientByFd(fd)->getNickname() + " #" + channelName + " " + channel->GetTopicName() + "\r\n", fd);
+        sendResponse(": 333 " + findClientByFd(fd)->getNickname() + " #" + channelName + " " + findClientByFd(fd)->getNickname() + " " + channel->GetTime() + "\r\n", fd);
     }
 }
 
 // Met à jour le sujet du canal
 void Server::updateTopic(Channel *channel, const std::string &channelName, const std::string &topic, int fd)
 {
-    if (channel->Gettopic_restriction() && !channel->get_admin(fd))
+    if (channel->getTopicRestriction() && !channel->getAdmin(fd))
     {
         senderror(482, "#" + channelName, fd, " :You're not a channel operator\r\n");
     }
@@ -95,8 +95,8 @@ void Server::updateTopic(Channel *channel, const std::string &channelName, const
     {
         channel->SetTopicName(topic);
         channel->SetTime(tTopic());
-        std::string rpl = ":" + GetClient(fd)->getNickname() + "!" + GetClient(fd)->getUsername() + "@localhost TOPIC #" + channelName + " :" + topic + "\r\n";
-        channel->sendTo_all(rpl);
+        std::string rpl = ":" + findClientByFd(fd)->getNickname() + "!" + findClientByFd(fd)->getUsername() + "@localhost TOPIC #" + channelName + " :" + topic + "\r\n";
+        channel->sendToAll(rpl);
     }
 }
 
