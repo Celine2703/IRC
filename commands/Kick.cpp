@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 20:25:45 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:27:27 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void Server::cleanAllChannelNames(std::vector<std::string> &tmp, int fd)
         }
         else
         {
-            senderror(403, findClientByFd(fd)->getNickname(), tmp[i], findClientByFd(fd)->getFd(), " :No such channel\r\n");
+            senderror(403, findClientByFd(fd)->getNickname(), tmp[i], findClientByFd(fd)->getFd(), " :No such channel\n");
             tmp.erase(tmp.begin() + i--);
         }
     }
@@ -145,7 +145,7 @@ bool Server::checkParameters(const std::string &user, int fd)
 {
     if (user.empty())
     {
-        senderror(461, "", fd, " :Not enough parameters\r\n");
+        senderror(461, "", fd, " :Not enough parameters\n");
         return false;
     }
     return true;
@@ -159,31 +159,31 @@ void Server::kickOutChannel(const std::string &user, const std::string &reason, 
         Channel *ch = findChannelByName(tmp[i]);
         if (!ch)
         {
-            senderror(403, "#" + tmp[i], fd, " :No such channel\r\n");
+            senderror(403, "#" + tmp[i], fd, " :No such channel\n");
             continue;
         }
         if (!ch->getClientInChannelByFd(fd) && !ch->getAdmin(fd))
         {
-            senderror(442, "#" + tmp[i], fd, " :You're not on that channel\r\n");
+            senderror(442, "#" + tmp[i], fd, " :You're not on that channel\n");
             continue;
         }
         if (!ch->getAdmin(fd))
         {
-            senderror(482, "#" + tmp[i], fd, " :You're not channel operator\r\n");
+            senderror(482, "#" + tmp[i], fd, " :You're not channel operator\n");
             continue;
         }
         if (!ch->findClientByFdInChannel(user))
         {
-            senderror(441, "#" + tmp[i], fd, " :They aren't on that channel\r\n");
+            senderror(441, "#" + tmp[i], fd, " :They aren't on that channel\n");
             continue;
         }
 
         std::stringstream ss;
         ss << ":" << findClientByFd(fd)->getNickname() << "!~" << findClientByFd(fd)->getUsername() << "@localhost KICK #" << tmp[i] << " " << user;
         if (!reason.empty())
-            ss << " :" << reason << "\r\n";
+            ss << " :" << reason << "\n";
         else
-            ss << "\r\n";
+            ss << "\n";
         ch->sendToAll(ss.str());
         ch->removeClient(ch->findClientByFdInChannel(user)->getFd());
     }

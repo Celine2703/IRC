@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:08 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:27:27 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void Server::rmChannels(int fd)
         }
         if (flag)
         {
-            std::string rpl = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost QUIT Quit\r\n";
+            std::string rpl = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost QUIT Quit\n";
             channels[i].sendToAll(rpl);
         }
     }
@@ -140,7 +140,7 @@ void Server::removeClientChannel(int fd, const std::string &reason)
             }
             else
             {
-                std::string rpl = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost QUIT " + reason + "\r\n";
+                std::string rpl = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost QUIT " + reason + "\n";
                 channels[i].sendToAll(rpl);
                 i++;
             }

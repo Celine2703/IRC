@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:01 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:27:27 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void Server::cleanChannels(std::vector<std::string> &channels, int fd)
         }
         else
         {
-            senderror(403, findClientByFd(fd)->getNickname(), channels[i], findClientByFd(fd)->getFd(), " :No such channel\r\n");
+            senderror(403, findClientByFd(fd)->getNickname(), channels[i], findClientByFd(fd)->getFd(), " :No such channel\n");
             channels.erase(channels.begin() + i--);
         }
     }
@@ -138,7 +138,7 @@ bool Server::verifyParameters(std::string cmd, std::vector<std::string> &tmp, st
 {
     if (!tokenizationPartCommand(cmd, tmp, reason, fd))
     {
-        senderror(461, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Not enough parameters\r\n");
+        senderror(461, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Not enough parameters\n");
         return false;
     }
     return true;
@@ -160,7 +160,7 @@ void Server::partOfChannel(std::vector<std::string> &channels, std::string &reas
             }
         }
         if (!flag)
-            senderror(403, findClientByFd(fd)->getNickname(), "#" + channels[i], findClientByFd(fd)->getFd(), " :No such channel\r\n");
+            senderror(403, findClientByFd(fd)->getNickname(), "#" + channels[i], findClientByFd(fd)->getFd(), " :No such channel\n");
     }
 }
 
@@ -169,16 +169,16 @@ void Server::manageChannelInterraction(const std::string &channel, const std::st
 {
     if (!channels[channelIndex].getClientInChannelByFd(fd) && !channels[channelIndex].getAdmin(fd))
     {
-        senderror(442, findClientByFd(fd)->getNickname(), "#" + channel, findClientByFd(fd)->getFd(), " :You're not on that channel\r\n");
+        senderror(442, findClientByFd(fd)->getNickname(), "#" + channel, findClientByFd(fd)->getFd(), " :You're not on that channel\n");
         return;
     }
     std::stringstream ss;
     ss << ":" << findClientByFd(fd)->getNickname() << "!~" << findClientByFd(fd)->getUsername() << "@"
        << "localhost PART #" << channel;
     if (!reason.empty())
-        ss << " :" << reason << "\r\n";
+        ss << " :" << reason << "\n";
     else
-        ss << "\r\n";
+        ss << "\n";
 
     channels[channelIndex].sendToAll(ss.str());
     removeFromChannel(fd, channelIndex);

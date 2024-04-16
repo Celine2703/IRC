@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:21:37 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:55:27 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Server::Start(std::string password, int port)
 
 std::string Server::removeFirstBackLine(std::string str)
 {
-	size_t pos = str.find("\n\r");
+	size_t pos = str.find("\r\n");
 	if (pos != std::string::npos)
 	{
 		str.erase(pos, 1);
