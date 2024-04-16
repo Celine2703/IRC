@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:20 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:59:18 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void Server::receiveData(int fd)
 {
 	char buffer[1024];
 	int bytes = recv(fd, buffer, sizeof(buffer), 0);
-	Client *cli = GetClient(fd);
+	Client *cli = findClientByFd(fd);
 	if (bytes <= -1)
 	{
 		perror("DEBUG");
@@ -64,9 +64,9 @@ void Server::receiveData(int fd)
 		}
 
 		// laiser getClient et non la var cli car si c'est l'order Kick la var cli est null
-		if (GetClient(fd))
+		if (findClientByFd(fd))
 		{
-			GetClient(fd)->clearBuffer();
+			findClientByFd(fd)->clearBuffer();
 		}
 	}
 }

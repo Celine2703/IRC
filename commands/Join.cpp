@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:56 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:00:11 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:27:27 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int Server::tokenizationJoin(std::vector<std::pair<std::string, std::string> > &
         {
             // Envoi d'une réponse d'erreur si le nom de canal est invalide
             // il faut créer un channel quand ce dernier nexiste oas
-            sendResponse("403 " + GetClient(fd)->getNickname() + " " + token[i].first + " :No such channel\r\n", GetClient(fd)->getFD());
+            sendResponse("403 " + findClientByFd(fd)->getNickname() + " " + token[i].first + " :No such channel\r\n", findClientByFd(fd)->getFd());
             token.erase(token.begin() + i--);
         }
         else
@@ -115,68 +115,68 @@ bool IsInvited(Client *cli, std::string ChName, int flag)
 // Fonction pour traiter le cas où un canal existe déjà
 void Server::isRealChannel(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd)
 {
-    if (this->channels[j].GetClientInChannel(GetClient(fd)->getNickname()))
+    if (this->channels[j].findClientByFdInChannel(findClientByFd(fd)->getNickname()))
         return;
-    if (SearchForClients(GetClient(fd)->getNickname()) >= 10)
+    if (findClientByName(findClientByFd(fd)->getNickname()) >= 10)
     {
-        senderror(405, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :You have joined too many channels\r\n");
+        senderror(405, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :You have joined too many channels\r\n");
         return;
     }
     if (!this->channels[j].GetPassword().empty() && this->channels[j].GetPassword() != token[i].second)
     {
-        if (!IsInvited(GetClient(fd), token[i].first, 0))
+        if (!IsInvited(findClientByFd(fd), token[i].first, 0))
         {
-            senderror(475, GetClient(fd)->getNickname(), "#" + token[i].first, GetClient(fd)->getFD(), " :Cannot join channel (+k) - bad key\r\n");
+            senderror(475, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+k) - bad key\r\n");
             return;
         }
     }
     if (this->channels[j].GetInvitOnly())
     {
-        if (!IsInvited(GetClient(fd), token[i].first, 1))
+        if (!IsInvited(findClientByFd(fd), token[i].first, 1))
         {
-            senderror(473, GetClient(fd)->getNickname(), "#" + token[i].first, GetClient(fd)->getFD(), " :Cannot join channel (+i)\r\n");
+            senderror(473, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+i)\r\n");
             return;
         }
     }
-    if (this->channels[j].GetLimit() && this->channels[j].GetClientsNumber() >= this->channels[j].GetLimit())
+    if (this->channels[j].GetLimit() && this->channels[j].findClientByFdsNumber() >= this->channels[j].GetLimit())
     {
-        senderror(471, GetClient(fd)->getNickname(), "#" + token[i].first, GetClient(fd)->getFD(), " :Cannot join channel (+l)\r\n");
+        senderror(471, findClientByFd(fd)->getNickname(), "#" + token[i].first, findClientByFd(fd)->getFd(), " :Cannot join channel (+l)\r\n");
         return;
     }
 
-    Client *cli = GetClient(fd);
-    this->channels[j].add_Client(*cli);
+    Client *cli = findClientByFd(fd);
+    this->channels[j].addClient(*cli);
     if (channels[j].GetTopicName().empty())
-        sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first) +
-                         RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
-                         RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
+        sendResponse(RPL_JOINMSG(findClientByFd(fd)->getHostname(), findClientByFd(fd)->getIPAddress(), token[i].first) +
+                         RPL_NAMREPLY(findClientByFd(fd)->getNickname(), channels[j].GetName(), channels[j].clientChannelList()) +
+                         RPL_ENDOFNAMES(findClientByFd(fd)->getNickname(), channels[j].GetName()),
                      fd);
     else
-        sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first) +
-                         RPL_TOPICIS(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].GetTopicName()) +
-                         RPL_NAMREPLY(GetClient(fd)->getNickname(), channels[j].GetName(), channels[j].ClientChannel_list()) +
-                         RPL_ENDOFNAMES(GetClient(fd)->getNickname(), channels[j].GetName()),
+        sendResponse(RPL_JOINMSG(findClientByFd(fd)->getHostname(), findClientByFd(fd)->getIPAddress(), token[i].first) +
+                         RPL_TOPICIS(findClientByFd(fd)->getNickname(), channels[j].GetName(), channels[j].GetTopicName()) +
+                         RPL_NAMREPLY(findClientByFd(fd)->getNickname(), channels[j].GetName(), channels[j].clientChannelList()) +
+                         RPL_ENDOFNAMES(findClientByFd(fd)->getNickname(), channels[j].GetName()),
                      fd);
-    channels[j].sendTo_all(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), token[i].first), fd);
+    channels[j].sendToAll(RPL_JOINMSG(findClientByFd(fd)->getHostname(), findClientByFd(fd)->getIPAddress(), token[i].first), fd);
 }
 
 // Fonction pour traiter le cas où un canal n'existe pas encore
 void Server::isNotRealChannel(std::vector<std::pair<std::string, std::string> > &token, int i, int fd)
 {
-    if (SearchForClients(GetClient(fd)->getNickname()) >= 10)
+    if (findClientByName(findClientByFd(fd)->getNickname()) >= 10)
     {
-        senderror(405, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :You have joined too many channels\r\n");
+        senderror(405, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :You have joined too many channels\r\n");
         return;
     }
     Channel newChannel;
     newChannel.SetName(removeFirstBackLine(token[i].first));
-    newChannel.add_admin(*GetClient(fd));
-    newChannel.set_createiontime();
+    newChannel.addAdmin(*findClientByFd(fd));
+    newChannel.setCreateAt();
     this->channels.push_back(newChannel);
     // notifiy thet the Client joined the channel
-    sendResponse(RPL_JOINMSG(GetClient(fd)->getHostname(), GetClient(fd)->getIPAddress(), newChannel.GetName()) +
-                     RPL_NAMREPLY(GetClient(fd)->getNickname(), newChannel.GetName(), newChannel.ClientChannel_list()) +
-                     RPL_ENDOFNAMES(GetClient(fd)->getNickname(), newChannel.GetName()),
+    sendResponse(RPL_JOINMSG(findClientByFd(fd)->getHostname(), findClientByFd(fd)->getIPAddress(), newChannel.GetName()) +
+                     RPL_NAMREPLY(findClientByFd(fd)->getNickname(), newChannel.GetName(), newChannel.clientChannelList()) +
+                     RPL_ENDOFNAMES(findClientByFd(fd)->getNickname(), newChannel.GetName()),
                  fd);
 }
 
@@ -192,14 +192,14 @@ void Server::JOIN(std::string cmd, int fd)
     // pas de nom de channel
     if (!tokenizationJoin(token, cmd, fd))
     {
-        senderror(461, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :Not enough parameters\r\n");
+        senderror(461, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Not enough parameters\r\n");
         return;
     }
 
     // le Client a deja trop de channel
     if (token.size() > 10)
     {
-        senderror(407, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :Too many channels\r\n");
+        senderror(407, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Too many channels\r\n");
         return;
     }
 

@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:59 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ std::string removeNewline(std::string str)
 	return str;
 }
 
-bool Server::is_validNickname(std::string &nickname)
+bool Server::isValidNickname(std::string &nickname)
 {
 	if (!nickname.empty() && (nickname[0] == '&' || nickname[0] == '#' || nickname[0] == ':'))
 		return false;
@@ -48,7 +48,7 @@ bool Server::nicknameAlreadyUseByClient(std::string &nickname)
 void Server::setClientNickname(std::string cmd, int fd)
 {
 	std::string inuse;
-	Client *cli = GetClient(fd);
+	Client *cli = findClientByFd(fd);
 	cmd = removeNewline(cmd);
 	if (cmd.empty())
 	{
@@ -63,7 +63,7 @@ void Server::setClientNickname(std::string cmd, int fd)
 		sendResponse(RED + ERR_NICKINUSE(std::string(cmd)) + WHI, fd);
 		return;
 	}
-	if (!is_validNickname(cmd))
+	if (!isValidNickname(cmd))
 	{
 		sendResponse(RED + ERR_ERRONEUSNICK(std::string(cmd)) + WHI, fd);
 		return;

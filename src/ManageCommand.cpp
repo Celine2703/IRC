@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:58:36 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ void Server::parseCommand(std::string cmd, int fd)
 	if (cmd.empty())
 		return;
 
-	if (cmd == "CAP LS" && GetClient(fd)->isFirstMessage())
+	if (cmd == "CAP LS" && findClientByFd(fd)->isFirstMessage())
 	{
-		GetClient(fd)->setFirstMessage(false);
+		findClientByFd(fd)->setFirstMessage(false);
 		return;
 	}
 

@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:12:13 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:19:30 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ public:
 	void						PING(std::string &cmd, int &fd);
 	void						INVITE(std::string &cmd, int &fd);
 	void						Start(std::string password, int port);
+	
 	void						ServerSocket();
 	void						acceptClient();
 	void						receiveData(int fd);
@@ -100,33 +101,33 @@ public:
 	void						partOfChannel(std::vector<std::string>& channels, std::string& reason, int fd);
 	void						manageChannelInterraction(const std::string& channel, const std::string& reason, int fd, size_t channelIndex);
 	void						removeFromChannel(int fd, size_t channelIndex);
-	void						RemoveFds(int fd);
-	void						RemoveClient(int fd);
-	void						RmChannels(int fd);
-	void						partOfChannelicipation(int fd, const std::string& reason);
-	void						NotifyDisconnection(int fd);
-	void						CleanupResources(int fd);
-	static void					SignalHandler(int signal);
+	void						removeFd(int fd);
+	void						removeClient(int fd);
+	void						rmChannels(int fd);
+	void						removeClientChannel(int fd, const std::string& reason);
+	void						showDisconnectionClient(int fd);
+	void						freeClient(int fd);
+	static void					signalHandler(int signal);
 	std::string					removeFirstBackLine(std::string);
 	std::string					removeAllNewLines(std::string);
 	std::string					tTopic();
-	std::string					gettopic(std::string &input);
-	std::string					SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
-	std::string					ExtractReason(std::string& reason);
-	std::string					ExtractQuitReason(std::string cmd);
-	bool						is_validNickname(std::string& nickname);
+	std::string					getTopic(std::string &input);
+	std::string					tokenizationKickCommand(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
+	std::string					extractReason(std::string& reason);
+	std::string					extractQuitReason(std::string cmd);
+	bool						isValidNickname(std::string& nickname);
 	bool						nicknameAlreadyUseByClient(std::string& nickname);
 	bool						hasSufficientParameters(const std::vector<std::string>& scmd, int fd);
-	bool						CheckParameters(const std::string& user, int fd);
-	bool						VerifyParameters(std::string cmd, std::vector<std::string>& tmp, std::string& reason, int fd);
-	int							SplitCmdPart(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
-	int							getpos(std::string &cmd);
-	int							SearchForClients(std::string nickname);
+	bool						checkParameters(const std::string& user, int fd);
+	bool						verifyParameters(std::string cmd, std::vector<std::string>& tmp, std::string& reason, int fd);
+	int							tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
+	int							getPositionColon(std::string &cmd);
+	int							findClientByName(std::string nickname);
 	int 						tokenizationJoin(std::vector< std::pair <std::string, std::string> > &token, std::string cmd, int fd);
-	Channel						*GetChannel(std::string name);
+	Channel						*findChannelByName(std::string name);
 	Channel						*validateChannel(const std::string& channelName, int fd);
-	Client						*GetClient(int fd);
-	Client						*GetClientNick(std::string nickname);
+	Client						*findClientByFd(int fd);
+	Client						*findClientByNick(std::string nickname);
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
 
 };

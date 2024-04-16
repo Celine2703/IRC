@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:59:26 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:21:37 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ void Server::acceptClient()
 	NewPoll.events = POLLIN;
 	NewPoll.revents = 0;
 
-	NewClient.setFD(ClientSocketFd);
-	NewClient.setIP(inet_ntoa(ClientAdd.sin_addr));
+	NewClient.setFd(ClientSocketFd);
+	NewClient.setIp(inet_ntoa(ClientAdd.sin_addr));
 	this->Clients.push_back(NewClient);
 	this->PollFds.push_back(NewPoll);
 	std::cout << "Client connected" << std::endl;

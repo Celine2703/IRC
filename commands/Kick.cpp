@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 20:25:45 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:10:31 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:27:27 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ std::string SplitCmdK(std::string &cmd, std::vector<std::string> &tmp)
 }
 
 // Extrait la raison d'un argument de commande, en nettoyant les préfixes et en limitant à l'espace.
-std::string Server::ExtractReason(std::string &reason)
+std::string Server::extractReason(std::string &reason)
 {
     if (reason[0] == ':')
     {
@@ -82,7 +82,7 @@ void Server::cleanAllChannelNames(std::vector<std::string> &tmp, int fd)
         }
         else
         {
-            senderror(403, GetClient(fd)->getNickname(), tmp[i], GetClient(fd)->getFD(), " :No such channel\r\n");
+            senderror(403, findClientByFd(fd)->getNickname(), tmp[i], findClientByFd(fd)->getFd(), " :No such channel\r\n");
             tmp.erase(tmp.begin() + i--);
         }
     }
@@ -108,7 +108,7 @@ void Server::splitChannelNames(const std::string &str, std::vector<std::string> 
 }
 
 // Traite la commande Kick, séparant les arguments et nettoyant le nom du canal.
-std::string Server::SplitCmdKick(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd)
+std::string Server::tokenizationKickCommand(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd)
 {
     std::string reason = SplitCmdK(cmd, tmp);
 
@@ -122,7 +122,7 @@ std::string Server::SplitCmdKick(std::string cmd, std::vector<std::string> &tmp,
 
     splitChannelNames(str, tmp);
     cleanAllChannelNames(tmp, fd);
-    reason = ExtractReason(reason);
+    reason = extractReason(reason);
 
     return reason;
 }
@@ -132,16 +132,16 @@ void Server::KICK(std::string cmd, int fd)
 {
     std::vector<std::string> tmp;
     std::string reason, user;
-    reason = SplitCmdKick(cmd, tmp, user, fd);
+    reason = tokenizationKickCommand(cmd, tmp, user, fd);
 
-    if (!CheckParameters(user, fd))
+    if (!checkParameters(user, fd))
         return;
 
     kickOutChannel(user, reason, tmp, fd);
 }
 
 // Vérifie si les paramètres nécessaires sont présents pour une commande.
-bool Server::CheckParameters(const std::string &user, int fd)
+bool Server::checkParameters(const std::string &user, int fd)
 {
     if (user.empty())
     {
@@ -156,35 +156,35 @@ void Server::kickOutChannel(const std::string &user, const std::string &reason, 
 {
     for (size_t i = 0; i < tmp.size(); i++)
     {
-        Channel *ch = GetChannel(tmp[i]);
+        Channel *ch = findChannelByName(tmp[i]);
         if (!ch)
         {
             senderror(403, "#" + tmp[i], fd, " :No such channel\r\n");
             continue;
         }
-        if (!ch->get_Client(fd) && !ch->get_admin(fd))
+        if (!ch->getClientInChannelByFd(fd) && !ch->getAdmin(fd))
         {
             senderror(442, "#" + tmp[i], fd, " :You're not on that channel\r\n");
             continue;
         }
-        if (!ch->get_admin(fd))
+        if (!ch->getAdmin(fd))
         {
             senderror(482, "#" + tmp[i], fd, " :You're not channel operator\r\n");
             continue;
         }
-        if (!ch->GetClientInChannel(user))
+        if (!ch->findClientByFdInChannel(user))
         {
             senderror(441, "#" + tmp[i], fd, " :They aren't on that channel\r\n");
             continue;
         }
 
         std::stringstream ss;
-        ss << ":" << GetClient(fd)->getNickname() << "!~" << GetClient(fd)->getUsername() << "@localhost KICK #" << tmp[i] << " " << user;
+        ss << ":" << findClientByFd(fd)->getNickname() << "!~" << findClientByFd(fd)->getUsername() << "@localhost KICK #" << tmp[i] << " " << user;
         if (!reason.empty())
             ss << " :" << reason << "\r\n";
         else
             ss << "\r\n";
-        ch->sendTo_all(ss.str());
-        ch->remove_Client(ch->GetClientInChannel(user)->getFD());
+        ch->sendToAll(ss.str());
+        ch->removeClient(ch->findClientByFdInChannel(user)->getFd());
     }
 }
