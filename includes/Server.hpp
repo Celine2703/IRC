@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 22:33:27 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:40:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,9 @@ public:
 	bool						checkParameters(std::vector<std::string>& scmd, int& fd);
 	bool						handleChannelLimitsAndInvitations(std::vector<std::string>& scmd, int& fd);
 	bool						validateMessageAndRecipients(const std::vector<std::string>& tmp, const std::string& message, int fd);
+	bool						validateCommand(const std::string& cmd, int fd);
+	bool						processPassword(Client* cli, const std::string& cmd, int fd);
+	bool						checkRegistration(Client* cli, int fd);
 	
 	int							tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
 	int							getPositionColon(std::string &cmd);
@@ -148,7 +151,6 @@ public:
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
 	static void					SetserverRunning(bool value);
 	static bool					getServerRunning();
-	static void FindPM(std::string cmd, std::string tofind, std::string &str);
 
 };
 
