@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:19:30 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:34:47 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,9 @@ public:
 	void						removeClientChannel(int fd, const std::string& reason);
 	void						showDisconnectionClient(int fd);
 	void						freeClient(int fd);
+	
 	static void					signalHandler(int signal);
+
 	std::string					removeFirstBackLine(std::string);
 	std::string					removeAllNewLines(std::string);
 	std::string					tTopic();
@@ -115,15 +117,21 @@ public:
 	std::string					tokenizationKickCommand(std::string cmd, std::vector<std::string> &tmp, std::string &user, int fd);
 	std::string					extractReason(std::string& reason);
 	std::string					extractQuitReason(std::string cmd);
+	
 	bool						isValidNickname(std::string& nickname);
 	bool						nicknameAlreadyUseByClient(std::string& nickname);
 	bool						hasSufficientParameters(const std::vector<std::string>& scmd, int fd);
 	bool						checkParameters(const std::string& user, int fd);
 	bool						verifyParameters(std::string cmd, std::vector<std::string>& tmp, std::string& reason, int fd);
+	bool						checkChannelMembershipAndRights(std::vector<std::string>& scmd, int& fd);
+	bool						checkParameters(std::vector<std::string>& scmd, int& fd);
+	bool						handleChannelLimitsAndInvitations(std::vector<std::string>& scmd, int& fd);
+	
 	int							tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
 	int							getPositionColon(std::string &cmd);
 	int							findClientByName(std::string nickname);
 	int 						tokenizationJoin(std::vector< std::pair <std::string, std::string> > &token, std::string cmd, int fd);
+
 	Channel						*findChannelByName(std::string name);
 	Channel						*validateChannel(const std::string& channelName, int fd);
 	Client						*findClientByFd(int fd);
