@@ -41,7 +41,7 @@ void Server::Start(std::string password, int port)
 		while (Server::getServerRunning())
 		{
 			
-			if ((poll(&PollFds[0], PollFds.size(), 100) == -1) && Server::getServerRunning()) //-> wait for an event
+			if ((poll(&PollFds[0], PollFds.size(), 10) == -1) && Server::getServerRunning()) //-> wait for an event
 				throw(std::runtime_error("poll() faild"));
 			if (!Server::getServerRunning())
 				break;
@@ -69,7 +69,8 @@ void Server::Start(std::string password, int port)
 				if (PollFds[i].revents & POLLHUP)
 				{
 					std::cerr << "CLIENT IS POLLING HUP"<< std::endl;
-					QUIT("", PollFds[i].fd);
+					clearClients(PollFds[i].fd);
+					close(PollFds[i].fd);
 				}
 			}
 		}
