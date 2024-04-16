@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 22:27:04 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:33:27 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ public:
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
 	static void					SetserverRunning(bool value);
 	static bool					getServerRunning();
+	static void FindPM(std::string cmd, std::string tofind, std::string &str);
 
 };
 

@@ -6,13 +6,14 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:06 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 22:30:23 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:34:20 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-void FindPM(std::string cmd, std::string tofind, std::string &str)
+
+void PRIVMSGPosCommand(std::string cmd, std::string tofind, std::string &str)
 {
 	size_t i = 0;
 	for (; i < cmd.size(); i++)
@@ -36,7 +37,7 @@ void FindPM(std::string cmd, std::string tofind, std::string &str)
 	str = str.substr(i);
 }
 
-std::string SplitCmdPM(std::string &cmd, std::vector<std::string> &tmp)
+std::string tokenizationPrivateMessageCommand(std::string &cmd, std::vector<std::string> &tmp)
 {
 	std::stringstream ss(cmd);
 	std::string str, msg;
@@ -45,13 +46,13 @@ std::string SplitCmdPM(std::string &cmd, std::vector<std::string> &tmp)
 		tmp.push_back(str);
 	if (tmp.size() != 2)
 		return std::string("");
-	FindPM(cmd, tmp[1], msg);
+	PRIVMSGPosCommand(cmd, tmp[1], msg);
 	return msg;
 }
 
 std::string Server::initialSplitAndValidate(std::string cmd, std::vector<std::string> &tmp)
 {
-	std::string str = SplitCmdPM(cmd, tmp);
+	std::string str = tokenizationPrivateMessageCommand(cmd, tmp);
 	if (tmp.size() != 2)
 	{
 		tmp.clear();
@@ -212,3 +213,4 @@ void Server::PRIVMSG(std::string cmd, int fd)
 
 	distributeMessages(tmp, message, fd);
 }
+
