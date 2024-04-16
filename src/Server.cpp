@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:58:18 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:54:57 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,14 @@ void Server::Start(std::string password, int port)
 					}
 					else
 					{
-						try {
+						try
+						{
 							ReceiveData(PollFds[i].fd);
-						} catch (std::runtime_error &e) {
+						}
+						catch (std::runtime_error &e)
+						{
 							std::cerr << e.what() << std::endl;
 							std::cout << "Client error" << std::endl;
-							
 						}
 					}
 				}
@@ -79,6 +81,13 @@ std::string Server::removeFirstBackLine(std::string str)
 		str.erase(pos, 1);
 	}
 
+	return str;
+}
+
+std::string Server::removeAllNewLines(std::string str)
+{
+	str.erase(remove(str.begin(), str.end(), '\n'), str.end());
+	str.erase(remove(str.begin(), str.end(), '\r'), str.end());
 	return str;
 }
 

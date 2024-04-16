@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:37 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:59:01 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:20:30 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ public:
     bool			getChannelInvite(std::string name);
     void			setChannelsInvite(const std::vector<std::string>& channelsInvite);
 	void			rmChannelInvite(std::string chname);
+	void			addChannelInvite(std::string chname);
     const			std::string& getBuffer() const;
     void			setBuffer(const std::string& buffer);
 	bool			isFirstMessage();

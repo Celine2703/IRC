@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:20 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:08:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:55:16 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void Server::sendResponse(std::string response, int fd)
 {
-	// std::cout << "Response:\n" << response;
 	std::cout << "Envoie => " << fd << " => " << response << std::endl;
 	if (send(fd, response.c_str(), response.size(), 0) == -1)
 		std::cerr << "Response send() faild" << std::endl;

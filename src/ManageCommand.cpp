@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:04:05 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:23:43 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,10 @@ void Server::ParseCommand(std::string cmd, int fd)
 	else if (tokens.size() && (tokens[0] == "PING" || tokens[0] == "ping"))
 	{
 		PING(cmd, fd);
+	}
+	else if (tokens.size() && (tokens[0] == "INVITE" || tokens[0] == "invite"))
+	{
+		INVITE(cmd, fd);
 	}
 }
 

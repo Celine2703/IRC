@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:56 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 19:01:40 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:36:51 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,15 @@ bool IsInvited(Client *cli, std::string ChName, int flag)
 // Fonction pour traiter le cas où un canal existe déjà
 void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd)
 {
-    if (this->channels[j].GetClientInChannel(GetClient(fd)->getNickname())) // if the Client is already registered
+    if (this->channels[j].GetClientInChannel(GetClient(fd)->getNickname()))
         return;
-    if (SearchForClients(GetClient(fd)->getNickname()) >= 10) // ERR_TOOMANYCHANNELS (405) // if the Client is already in 10 channels
+    if (SearchForClients(GetClient(fd)->getNickname()) >= 10)
     {
         senderror(405, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :You have joined too many channels\r\n");
         return;
     }
     if (!this->channels[j].GetPassword().empty() && this->channels[j].GetPassword() != token[i].second)
-    { // ERR_BADCHANNELKEY (475) // if the password is incorrect
+    {
         if (!IsInvited(GetClient(fd), token[i].first, 0))
         {
             senderror(475, GetClient(fd)->getNickname(), "#" + token[i].first, GetClient(fd)->getFD(), " :Cannot join channel (+k) - bad key\r\n");
@@ -131,19 +131,19 @@ void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, i
         }
     }
     if (this->channels[j].GetInvitOnly())
-    { // ERR_INVITEONLYCHAN (473) // if the channel is invit only
+    {
         if (!IsInvited(GetClient(fd), token[i].first, 1))
         {
             senderror(473, GetClient(fd)->getNickname(), "#" + token[i].first, GetClient(fd)->getFD(), " :Cannot join channel (+i)\r\n");
             return;
         }
     }
-    if (this->channels[j].GetLimit() && this->channels[j].GetClientsNumber() >= this->channels[j].GetLimit()) // ERR_CHANNELISFULL (471) // if the channel reached the limit of number of Clients
+    if (this->channels[j].GetLimit() && this->channels[j].GetClientsNumber() >= this->channels[j].GetLimit())
     {
         senderror(471, GetClient(fd)->getNickname(), "#" + token[i].first, GetClient(fd)->getFD(), " :Cannot join channel (+l)\r\n");
         return;
     }
-    // add the Client to the channel
+
     Client *cli = GetClient(fd);
     this->channels[j].add_Client(*cli);
     if (channels[j].GetTopicName().empty())
@@ -163,13 +163,13 @@ void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, i
 // Fonction pour traiter le cas où un canal n'existe pas encore
 void Server::NotExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int fd)
 {
-    if (SearchForClients(GetClient(fd)->getNickname()) >= 10) // ERR_TOOMANYCHANNELS (405) // if the Client is already in 10 channels
+    if (SearchForClients(GetClient(fd)->getNickname()) >= 10)
     {
         senderror(405, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :You have joined too many channels\r\n");
         return;
     }
     Channel newChannel;
-    newChannel.SetName(token[i].first);
+    newChannel.SetName(removeFirstBackLine(token[i].first));
     newChannel.add_admin(*GetClient(fd));
     newChannel.set_createiontime();
     this->channels.push_back(newChannel);

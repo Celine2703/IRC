@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 18:39:22 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 20:31:14 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:56:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ void Server::updateTopic(Channel *channel, const std::string &channelName, const
         channel->sendTo_all(rpl);
     }
 }
-
 
 // Traite la commande TOPIC
 void Server::TOPIC(std::string &cmd, int &fd)

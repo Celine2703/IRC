@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:18 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:58:04 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:21:20 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,4 +132,9 @@ void Client::rmChannelInvite(std::string chname)
             return;
         }
     }
+}
+
+void Client::addChannelInvite(std::string chname)
+{
+    channelsInvite.push_back(chname);
 }
