@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:01 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:45:29 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void Server::PART(std::string cmd, int fd)
     partOfChannel(tmp, reason, fd);
 }
 
-void FindPR(std::string cmd, std::string tofind, std::string &str)
+void getPartCommand(std::string cmd, std::string tofind, std::string &str)
 {
     size_t i = 0;
     for (; i < cmd.size(); i++)
@@ -48,7 +48,7 @@ void FindPR(std::string cmd, std::string tofind, std::string &str)
     str = str.substr(i);
 }
 
-std::string SplitCmdPR(std::string &cmd, std::vector<std::string> &tmp)
+std::string tokenizationPartCommand2(std::string &cmd, std::vector<std::string> &tmp)
 {
     std::stringstream ss(cmd);
     std::string str, reason;
@@ -57,7 +57,7 @@ std::string SplitCmdPR(std::string &cmd, std::vector<std::string> &tmp)
         tmp.push_back(str);
     if (tmp.size() != 2)
         return std::string("");
-    FindPR(cmd, tmp[1], reason);
+    getPartCommand(cmd, tmp[1], reason);
     return reason;
 }
 
@@ -116,7 +116,7 @@ void Server::getGoodReason(std::string &reason)
 // Méthode principale qui utilise les sous-méthodes pour traiter la commande.
 int Server::tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd)
 {
-    reason = SplitCmdPR(cmd, tmp);
+    reason = tokenizationPartCommand2(cmd, tmp);
     if (tmp.size() < 2)
     {
         tmp.clear();
