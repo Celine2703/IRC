@@ -21,7 +21,7 @@ void Server::sendResponse(std::string response, int fd)
 
 void Server::receiveData(int fd)
 {
-	char buffer[1024];
+	char buffer[1024] = {0};
 	int bytes = recv(fd, buffer, sizeof(buffer), 0);
 	Client *cli = findClientByFd(fd);
 	if (bytes <= -1)
