@@ -37,7 +37,8 @@ void Server::Start(std::string password, int port)
 		std::cout << "waiting to accept a connection" << std::endl;
 
 		this->password = password;
-		while (true)
+		Server::ServerRunning = true;
+		while (Server::ServerRunning)
 		{
 			if ((poll(&PollFds[0], PollFds.size(), -1) == -1)) //-> wait for an event
 				throw(std::runtime_error("poll() faild"));
@@ -65,6 +66,7 @@ void Server::Start(std::string password, int port)
 				}
 			}
 		}
+		std::cout << "Server is shutting down" << std::endl;
 	}
 	catch (std::runtime_error &e)
 	{
@@ -162,4 +164,9 @@ void Server::ServerInit()
 	}
 
 	std::cout << "Server is running on port " << Port << std::endl;
+}
+
+void Server::SetserverRunning(bool value)
+{
+	Server::ServerRunning = value;
 }

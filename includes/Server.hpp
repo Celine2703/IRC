@@ -128,6 +128,7 @@ public:
 	Client						*GetClient(int fd);
 	Client						*GetClientNick(std::string nickname);
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
+	static void					SetserverRunning(bool value);
 
 };
 

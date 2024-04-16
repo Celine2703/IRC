@@ -12,10 +12,17 @@
 
 #include <iostream>
 #include "Server.hpp"
+#include <csignal>
 
 void usage()
 {
     std::cout << "Usage: ircserv <port> <password>" << std::endl;
+}
+
+void signalHandler(int signum) {
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+
+    Server::SetserverRunning(false);
 }
 
 int main(int argc, char **argv)
@@ -32,9 +39,10 @@ int main(int argc, char **argv)
     std::string password = "1"; // normalement donner par l'user  argv[2]
     const char *port = "6667";  // normalement donner par l'user  argv[1]
     Server s;
-
+    signal(SIGINT, signalHandler);
     try
     {
+        
         s.Start(password, std::atoi(port));
     }
     catch (std::exception &e)
