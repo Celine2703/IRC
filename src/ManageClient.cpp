@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:24 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:58:12 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:59:18 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Client *Server::GetClientNick(std::string nickname)
 	return NULL;
 }
 
-void Server::ClearClients(int fd)
+void Server::clearClients(int fd)
 {
 	for (size_t i = 0; i < Clients.size(); i++)
 	{

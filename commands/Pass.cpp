@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:03 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 17:54:56 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:58:14 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ std::string removeNewline2(std::string str)
 }
 
 // PASS
-void Server::PASS_Client(int fd, std::string cmd)
+void Server::PASS(int fd, std::string cmd)
 {
 	Client *cli = GetClient(fd);
 

@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 20:25:45 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 21:12:43 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:02:20 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ std::string Server::ExtractReason(std::string &reason)
 }
 
 // Nettoie les noms de canaux dans une liste, supprimant les canaux invalides ou vides.
-void Server::CleanChannelNames(std::vector<std::string> &tmp, int fd)
+void Server::cleanAllChannelNames(std::vector<std::string> &tmp, int fd)
 {
     for (size_t i = 0; i < tmp.size(); i++)
     {
@@ -121,7 +121,7 @@ std::string Server::SplitCmdKick(std::string cmd, std::vector<std::string> &tmp,
     tmp.clear();
 
     SplitChannelNames(str, tmp);
-    CleanChannelNames(tmp, fd);
+    cleanAllChannelNames(tmp, fd);
     reason = ExtractReason(reason);
 
     return reason;

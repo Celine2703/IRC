@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:06 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:57:43 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:01:31 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ std::string SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp)
 	return str;
 }
 
-void Server::CheckForChannels_Clients(std::vector<std::string> &tmp, int fd)
+void Server::checkChannelsForClients(std::vector<std::string> &tmp, int fd)
 {
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
@@ -146,7 +146,7 @@ void Server::PRIVMSG(std::string cmd, int fd)
 		senderror(407, GetClient(fd)->getNickname(), GetClient(fd)->getFD(), " :Too many recipients\r\n");
 		return;
 	}
-	CheckForChannels_Clients(tmp, fd); // check if the channels and Clients exist
+	checkChannelsForClients(tmp, fd); // check if the channels and Clients exist
 	for (size_t i = 0; i < tmp.size(); i++)
 	{ // send the message to the Clients and channels
 		if (tmp[i][0] == '#')

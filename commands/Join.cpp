@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:56 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:36:51 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:00:11 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ bool IsInvited(Client *cli, std::string ChName, int flag)
 }
 
 // Fonction pour traiter le cas où un canal existe déjà
-void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd)
+void Server::isRealChannel(std::vector<std::pair<std::string, std::string> > &token, int i, int j, int fd)
 {
     if (this->channels[j].GetClientInChannel(GetClient(fd)->getNickname()))
         return;
@@ -161,7 +161,7 @@ void Server::ExistCh(std::vector<std::pair<std::string, std::string> > &token, i
 }
 
 // Fonction pour traiter le cas où un canal n'existe pas encore
-void Server::NotExistCh(std::vector<std::pair<std::string, std::string> > &token, int i, int fd)
+void Server::isNotRealChannel(std::vector<std::pair<std::string, std::string> > &token, int i, int fd)
 {
     if (SearchForClients(GetClient(fd)->getNickname()) >= 10)
     {
@@ -181,7 +181,7 @@ void Server::NotExistCh(std::vector<std::pair<std::string, std::string> > &token
 }
 
 // Fonction pour gérer la commande JOIN d'un Client
-void Server::JOIN_Client(std::string cmd, int fd)
+void Server::JOIN(std::string cmd, int fd)
 {
     (void)fd;
 
@@ -210,12 +210,12 @@ void Server::JOIN_Client(std::string cmd, int fd)
         {
             if (this->channels[j].GetName() == token[i].first)
             {
-                ExistCh(token, i, j, fd);
+                isRealChannel(token, i, j, fd);
                 flag = true;
                 break;
             }
         }
         if (!flag)
-            NotExistCh(token, i, fd);
+            isNotRealChannel(token, i, fd);
     }
 }

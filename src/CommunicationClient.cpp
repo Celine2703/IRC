@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:20 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 19:55:16 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:59:18 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void Server::sendResponse(std::string response, int fd)
 		std::cerr << "Response send() faild" << std::endl;
 }
 
-void Server::ReceiveData(int fd)
+void Server::receiveData(int fd)
 {
 	char buffer[1024];
 	int bytes = recv(fd, buffer, sizeof(buffer), 0);
@@ -36,7 +36,7 @@ void Server::ReceiveData(int fd)
 	if (bytes == 0)
 	{
 		std::cout << "Client disconnected" << std::endl;
-		ClearClients(fd);
+		clearClients(fd);
 		close(fd);
 	}
 	else
@@ -60,7 +60,7 @@ void Server::ReceiveData(int fd)
 		{
 			// on execute la commande
 			std::cout << "Execute commande : " << line << std::endl;
-			ParseCommand(line, fd);
+			parseCommand(line, fd);
 		}
 
 		// laiser getClient et non la var cli car si c'est l'order Kick la var cli est null
