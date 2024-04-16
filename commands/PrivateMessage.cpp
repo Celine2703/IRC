@@ -6,13 +6,14 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:06 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:51:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 22:34:20 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-void FindPM(std::string cmd, std::string tofind, std::string &str)
+
+void PRIVMSGPosCommand(std::string cmd, std::string tofind, std::string &str)
 {
 	size_t i = 0;
 	for (; i < cmd.size(); i++)
@@ -36,7 +37,7 @@ void FindPM(std::string cmd, std::string tofind, std::string &str)
 	str = str.substr(i);
 }
 
-std::string SplitCmdPM(std::string &cmd, std::vector<std::string> &tmp)
+std::string tokenizationPrivateMessageCommand(std::string &cmd, std::vector<std::string> &tmp)
 {
 	std::stringstream ss(cmd);
 	std::string str, msg;
@@ -45,22 +46,25 @@ std::string SplitCmdPM(std::string &cmd, std::vector<std::string> &tmp)
 		tmp.push_back(str);
 	if (tmp.size() != 2)
 		return std::string("");
-	FindPM(cmd, tmp[1], msg);
+	PRIVMSGPosCommand(cmd, tmp[1], msg);
 	return msg;
 }
 
-std::string SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp)
+std::string Server::initialSplitAndValidate(std::string cmd, std::vector<std::string> &tmp)
 {
-	std::string str = SplitCmdPM(cmd, tmp);
+	std::string str = tokenizationPrivateMessageCommand(cmd, tmp);
 	if (tmp.size() != 2)
 	{
 		tmp.clear();
 		return std::string("");
 	}
 	tmp.erase(tmp.begin());
-	std::string str1 = tmp[0];
+	return tmp[0];
+}
+
+void Server::splitStringByComma(std::string str1, std::vector<std::string> &tmp)
+{
 	std::string str2;
-	tmp.clear();
 	for (size_t i = 0; i < str1.size(); i++)
 	{
 		if (str1[i] == ',')
@@ -72,11 +76,19 @@ std::string SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp)
 			str2 += str1[i];
 	}
 	tmp.push_back(str2);
+}
+
+void Server::removeEmptyStrings(std::vector<std::string> &tmp)
+{
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
 		if (tmp[i].empty())
 			tmp.erase(tmp.begin() + i--);
 	}
+}
+
+std::string Server::adjustOriginalString(std::string str)
+{
 	if (str[0] == ':')
 		str.erase(str.begin());
 	else
@@ -91,6 +103,18 @@ std::string SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp)
 		}
 	}
 	return str;
+}
+
+std::string Server::SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp)
+{
+	std::string str1 = initialSplitAndValidate(cmd, tmp);
+	if (str1.empty())
+		return std::string("");
+
+	tmp.clear();
+	splitStringByComma(str1, tmp);
+	removeEmptyStrings(tmp);
+	return adjustOriginalString(str1);
 }
 
 void Server::checkChannelsForClients(std::vector<std::string> &tmp, int fd)
@@ -127,38 +151,66 @@ void Server::checkChannelsForClients(std::vector<std::string> &tmp, int fd)
 	}
 }
 
+bool Server::validateMessageAndRecipients(const std::vector<std::string> &tmp, const std::string &message, int fd)
+{
+	if (tmp.empty())
+	{
+		senderror(411, findClientByFd(fd)->getNickname(), fd, " :No recipient given (PRIVMSG)\n");
+		return false;
+	}
+	if (message.empty())
+	{
+		senderror(412, findClientByFd(fd)->getNickname(), fd, " :No text to send\n");
+		return false;
+	}
+	if (tmp.size() > 10)
+	{
+		senderror(407, findClientByFd(fd)->getNickname(), fd, " :Too many recipients\n");
+		return false;
+	}
+	return true;
+}
+
+void Server::sendMessageToChannel(const std::string &channel, const std::string &message, int fd)
+{
+	std::string nickname = findClientByFd(fd)->getNickname();
+	std::string username = findClientByFd(fd)->getUsername();
+	std::string resp = ":" + nickname + "!~" + username + "@localhost PRIVMSG #" + channel + " :" + message + "\n";
+	findChannelByName(channel)->sendToAll(resp, fd);
+}
+
+void Server::sendMessageToUser(const std::string &user, const std::string &message, int fd)
+{
+	std::string nickname = findClientByFd(fd)->getNickname();
+	std::string username = findClientByFd(fd)->getUsername();
+	std::string resp = ":" + nickname + "!~" + username + "@localhost PRIVMSG " + user + " :" + message + "\n";
+	sendResponse(resp, findClientByNick(user)->getFd());
+}
+
+void Server::distributeMessages(const std::vector<std::string> &recipients, const std::string &message, int fd)
+{
+	for (size_t i = 0; i < recipients.size(); ++i)
+	{
+		if (recipients[i][0] == '#')
+		{
+			std::string channelName = recipients[i].substr(1);
+			sendMessageToChannel(channelName, message, fd);
+		}
+		else
+		{
+			sendMessageToUser(recipients[i], message, fd);
+		}
+	}
+}
+
 void Server::PRIVMSG(std::string cmd, int fd)
 {
 	std::vector<std::string> tmp;
 	std::string message = SplitCmdPrivmsg(cmd, tmp);
-	if (!tmp.size())
-	{
-		senderror(411, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :No recipient given (PRIVMSG)\n");
+
+	if (!validateMessageAndRecipients(tmp, message, fd))
 		return;
-	}
-	if (message.empty())
-	{
-		senderror(412, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :No text to send\n");
-		return;
-	}
-	if (tmp.size() > 10)
-	{
-		senderror(407, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Too many recipients\n");
-		return;
-	}
-	checkChannelsForClients(tmp, fd);
-	for (size_t i = 0; i < tmp.size(); i++)
-	{
-		if (tmp[i][0] == '#')
-		{
-			tmp[i].erase(tmp[i].begin());
-			std::string resp = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost PRIVMSG #" + tmp[i] + " :" + message + "\n";
-			findChannelByName(tmp[i])->sendToAll(resp, fd);
-		}
-		else
-		{
-			std::string resp = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost PRIVMSG " + tmp[i] + " :" + message + "\n";
-			sendResponse(resp, findClientByNick(tmp[i])->getFd());
-		}
-	}
+
+	distributeMessages(tmp, message, fd);
 }
+
