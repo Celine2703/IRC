@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:06 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:31:30 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:50:09 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,17 +133,17 @@ void Server::PRIVMSG(std::string cmd, int fd)
 	std::string message = SplitCmdPrivmsg(cmd, tmp);
 	if (!tmp.size())
 	{
-		senderror(411, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :No recipient given (PRIVMSG)\r\n");
+		senderror(411, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :No recipient given (PRIVMSG)\n");
 		return;
 	}
 	if (message.empty())
 	{
-		senderror(412, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :No text to send\r\n");
+		senderror(412, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :No text to send\n");
 		return;
 	}
 	if (tmp.size() > 10)
 	{
-		senderror(407, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Too many recipients\r\n");
+		senderror(407, findClientByFd(fd)->getNickname(), findClientByFd(fd)->getFd(), " :Too many recipients\n");
 		return;
 	}
 	checkChannelsForClients(tmp, fd);
@@ -152,12 +152,12 @@ void Server::PRIVMSG(std::string cmd, int fd)
 		if (tmp[i][0] == '#')
 		{
 			tmp[i].erase(tmp[i].begin());
-			std::string resp = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost PRIVMSG #" + tmp[i] + " :" + message + "\r\n";
+			std::string resp = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost PRIVMSG #" + tmp[i] + " :" + message + "\n";
 			findChannelByName(tmp[i])->sendToAll(resp, fd);
 		}
 		else
 		{
-			std::string resp = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost PRIVMSG " + tmp[i] + " :" + message + "\r\n";
+			std::string resp = ":" + findClientByFd(fd)->getNickname() + "!~" + findClientByFd(fd)->getUsername() + "@localhost PRIVMSG " + tmp[i] + " :" + message + "\n";
 			sendResponse(resp, findClientByNick(tmp[i])->getFd());
 		}
 	}

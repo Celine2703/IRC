@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:15 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:29:11 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 21:46:48 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,11 +235,20 @@ bool Channel::changeAdminToClient(std::string &nick)
 void Channel::sendToAll(std::string rpl1)
 {
 	for (size_t i = 0; i < admins.size(); i++)
+	{
 		if (send(admins[i].getFd(), rpl1.c_str(), rpl1.size(), 0) == -1)
+		{
 			std::cerr << "send() faild" << std::endl;
+		}
+	}
+
 	for (size_t i = 0; i < Clients.size(); i++)
+	{
 		if (send(Clients[i].getFd(), rpl1.c_str(), rpl1.size(), 0) == -1)
+		{
 			std::cerr << "send() faild" << std::endl;
+		}
+	}
 }
 
 void Channel::sendToAll(std::string rpl1, int fd)
@@ -247,13 +256,22 @@ void Channel::sendToAll(std::string rpl1, int fd)
 	for (size_t i = 0; i < admins.size(); i++)
 	{
 		if (admins[i].getFd() != fd)
-			if (send(admins[i].getFd(), rpl1.c_str(), rpl1.size(), 0) == -1)
+		{
+			if (send(admins[i].getFd(), (rpl1).c_str(), (rpl1).size(), 0) == -1)
+			{
 				std::cerr << "send() faild" << std::endl;
+			}
+		}
 	}
+	
 	for (size_t i = 0; i < Clients.size(); i++)
 	{
 		if (Clients[i].getFd() != fd)
-			if (send(Clients[i].getFd(), rpl1.c_str(), rpl1.size(), 0) == -1)
+		{
+			if (send(Clients[i].getFd(), (rpl1).c_str(), rpl1.size(), 0) == -1)
+			{
 				std::cerr << "send() faild" << std::endl;
+			}
+		}
 	}
 }

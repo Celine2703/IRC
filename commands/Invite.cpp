@@ -6,11 +6,12 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 19:12:32 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:35:17 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:36:31 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
+
 
 bool Server::checkParameters(std::vector<std::string> &scmd, int &fd)
 {
