@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:48:28 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 19:05:15 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ public:
 	void						ProcessChannelParticipation(int fd, const std::string& reason);
 	void						NotifyDisconnection(int fd);
 	void						CleanupResources(int fd);
+	void						PING(std::string &cmd, int &fd);
 
 };
 
