@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cmartin- <cmartin-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:00 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 18:58:21 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 23:17:08 by cmartin-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,11 @@ int main(int argc, char **argv)
               << WHI << std::endl;
     std::string password = "1"; // normalement donner par l'user  argv[2]
     const char *port = "6667";  // normalement donner par l'user  argv[1]
+    if (argc == 3)
+    {
+        password = argv[2];
+        port = argv[1];
+    }
     Server s;
     signal(SIGINT, signalHandler);
     try
