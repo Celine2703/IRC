@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 20:25:45 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:02:20 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:10:31 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void Server::cleanAllChannelNames(std::vector<std::string> &tmp, int fd)
 }
 
 // Sépare les noms de canaux basés sur des virgules dans une chaîne donnée.
-void Server::SplitChannelNames(const std::string &str, std::vector<std::string> &tmp)
+void Server::splitChannelNames(const std::string &str, std::vector<std::string> &tmp)
 {
     std::string str1;
     for (size_t i = 0; i < str.size(); i++)
@@ -120,7 +120,7 @@ std::string Server::SplitCmdKick(std::string cmd, std::vector<std::string> &tmp,
     user = tmp[1];
     tmp.clear();
 
-    SplitChannelNames(str, tmp);
+    splitChannelNames(str, tmp);
     cleanAllChannelNames(tmp, fd);
     reason = ExtractReason(reason);
 
@@ -137,7 +137,7 @@ void Server::KICK(std::string cmd, int fd)
     if (!CheckParameters(user, fd))
         return;
 
-    ProcessKickForChannel(user, reason, tmp, fd);
+    kickOutChannel(user, reason, tmp, fd);
 }
 
 // Vérifie si les paramètres nécessaires sont présents pour une commande.
@@ -152,7 +152,7 @@ bool Server::CheckParameters(const std::string &user, int fd)
 }
 
 // Gère l'action de kick pour chaque canal impliqué, envoyant les notifications nécessaires.
-void Server::ProcessKickForChannel(const std::string &user, const std::string &reason, std::vector<std::string> &tmp, int fd)
+void Server::kickOutChannel(const std::string &user, const std::string &reason, std::vector<std::string> &tmp, int fd)
 {
     for (size_t i = 0; i < tmp.size(); i++)
     {

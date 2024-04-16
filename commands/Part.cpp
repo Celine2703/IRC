@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:01 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:51:06 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:12:13 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void Server::PART(std::string cmd, int fd)
     if (!VerifyParameters(cmd, tmp, reason, fd))
         return;
 
-    ProcessChannelPart(tmp, reason, fd);
+    partOfChannel(tmp, reason, fd);
 }
 
 void FindPR(std::string cmd, std::string tofind, std::string &str)
@@ -62,7 +62,7 @@ std::string SplitCmdPR(std::string &cmd, std::vector<std::string> &tmp)
 }
 
 // Extrai les noms des canaux à partir d'une chaîne séparée par des virgules.
-void Server::ExtractChannels(std::string &str, std::vector<std::string> &channels)
+void Server::extractChannels(std::string &str, std::vector<std::string> &channels)
 {
     std::string channel;
     for (size_t i = 0; i < str.size(); i++)
@@ -80,7 +80,7 @@ void Server::ExtractChannels(std::string &str, std::vector<std::string> &channel
 }
 
 // Nettoie et valide les noms des canaux, en supprimant les chaînes vides et les caractères spéciaux.
-void Server::CleanChannels(std::vector<std::string> &channels, int fd)
+void Server::cleanChannels(std::vector<std::string> &channels, int fd)
 {
     for (size_t i = 0; i < channels.size(); i++)
     {
@@ -101,7 +101,7 @@ void Server::CleanChannels(std::vector<std::string> &channels, int fd)
 }
 
 // Normalise la raison en supprimant le préfixe ':' ou en limitant la chaîne au premier espace.
-void Server::NormalizeReason(std::string &reason)
+void Server::getGoodReason(std::string &reason)
 {
     if (reason[0] == ':')
         reason.erase(reason.begin());
@@ -126,9 +126,9 @@ int Server::SplitCmdPart(std::string cmd, std::vector<std::string> &tmp, std::st
     std::string str = tmp[0];
     tmp.clear();
 
-    ExtractChannels(str, tmp);
-    CleanChannels(tmp, fd);
-    NormalizeReason(reason);
+    extractChannels(str, tmp);
+    cleanChannels(tmp, fd);
+    getGoodReason(reason);
 
     return 1;
 }
@@ -145,7 +145,7 @@ bool Server::VerifyParameters(std::string cmd, std::vector<std::string> &tmp, st
 }
 
 // Traite l'action de quitter pour chaque canal spécifié.
-void Server::ProcessChannelPart(std::vector<std::string> &channels, std::string &reason, int fd)
+void Server::partOfChannel(std::vector<std::string> &channels, std::string &reason, int fd)
 {
     for (size_t i = 0; i < channels.size(); i++)
     {
@@ -155,7 +155,7 @@ void Server::ProcessChannelPart(std::vector<std::string> &channels, std::string 
             if (this->channels[j].GetName() == channels[i])
             {
                 flag = true;
-                HandleChannelParticipation(channels[i], reason, fd, j);
+                manageChannelInterraction(channels[i], reason, fd, j);
                 break;
             }
         }
@@ -165,7 +165,7 @@ void Server::ProcessChannelPart(std::vector<std::string> &channels, std::string 
 }
 
 // Gère la participation au canal, envoyant les notifications nécessaires et mettant à jour les états des canaux.
-void Server::HandleChannelParticipation(const std::string &channel, const std::string &reason, int fd, size_t channelIndex)
+void Server::manageChannelInterraction(const std::string &channel, const std::string &reason, int fd, size_t channelIndex)
 {
     if (!channels[channelIndex].get_Client(fd) && !channels[channelIndex].get_admin(fd))
     {
@@ -181,11 +181,11 @@ void Server::HandleChannelParticipation(const std::string &channel, const std::s
         ss << "\r\n";
 
     channels[channelIndex].sendTo_all(ss.str());
-    RemoveFromChannel(fd, channelIndex);
+    removeFromChannel(fd, channelIndex);
 }
 
 // Retire un utilisateur d'un canal et supprime le canal s'il n'y a plus de membres.
-void Server::RemoveFromChannel(int fd, size_t channelIndex)
+void Server::removeFromChannel(int fd, size_t channelIndex)
 {
     if (channels[channelIndex].get_admin(channels[channelIndex].GetClientInChannel(GetClient(fd)->getNickname())->getFD()))
         channels[channelIndex].remove_admin(channels[channelIndex].GetClientInChannel(GetClient(fd)->getNickname())->getFD());

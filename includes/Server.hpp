@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:02:20 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:12:13 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,18 @@ public:
 	void						handleTopicDisplay(Channel* channel, const std::string& channelName, int fd) ;
 	void						updateTopic(Channel* channel, const std::string& channelName, const std::string& topic, int fd);
     void						cleanAllChannelNames(std::vector<std::string>& tmp, int fd);
-    void						SplitChannelNames(const std::string& str, std::vector<std::string>& tmp);
-    void						ProcessKickForChannel(const std::string& user, const std::string& reason, std::vector<std::string>& tmp, int fd);
-	void						CleanChannels(std::vector<std::string> &channels, int fd);
-	void						NormalizeReason(std::string &reason);
-	void 						ExtractChannels(std::string &str, std::vector<std::string> &channels);
-	void						ProcessChannelPart(std::vector<std::string>& channels, std::string& reason, int fd);
-	void						HandleChannelParticipation(const std::string& channel, const std::string& reason, int fd, size_t channelIndex);
-	void						RemoveFromChannel(int fd, size_t channelIndex);
+    void						splitChannelNames(const std::string& str, std::vector<std::string>& tmp);
+    void						kickOutChannel(const std::string& user, const std::string& reason, std::vector<std::string>& tmp, int fd);
+	void						cleanChannels(std::vector<std::string> &channels, int fd);
+	void						getGoodReason(std::string &reason);
+	void 						extractChannels(std::string &str, std::vector<std::string> &channels);
+	void						partOfChannel(std::vector<std::string>& channels, std::string& reason, int fd);
+	void						manageChannelInterraction(const std::string& channel, const std::string& reason, int fd, size_t channelIndex);
+	void						removeFromChannel(int fd, size_t channelIndex);
 	void						RemoveFds(int fd);
 	void						RemoveClient(int fd);
 	void						RmChannels(int fd);
-	void						ProcessChannelParticipation(int fd, const std::string& reason);
+	void						partOfChannelicipation(int fd, const std::string& reason);
 	void						NotifyDisconnection(int fd);
 	void						CleanupResources(int fd);
 	static void					SignalHandler(int signal);

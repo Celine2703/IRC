@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:08 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/14 22:47:50 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/16 20:11:30 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ std::string Server::ExtractQuitReason(std::string cmd)
 }
 
 // Gérer la suppression du client des canaux et l'envoi des notifications.
-void Server::ProcessChannelParticipation(int fd, const std::string &reason)
+void Server::partOfChannelicipation(int fd, const std::string &reason)
 {
     for (size_t i = 0; i < channels.size();)
     {
@@ -171,7 +171,7 @@ void Server::CleanupResources(int fd)
 void Server::QUIT(std::string cmd, int fd)
 {
     std::string reason = ExtractQuitReason(cmd);
-    ProcessChannelParticipation(fd, reason);
+    partOfChannelicipation(fd, reason);
     NotifyDisconnection(fd);
     CleanupResources(fd);
 }
