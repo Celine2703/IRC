@@ -66,6 +66,11 @@ void Server::Start(std::string password, int port)
 						}
 					}
 				}
+				if (PollFds[i].revents & POLLHUP)
+				{
+					std::cerr << "CLIENT IS POLLING HUP"<< std::endl;
+					QUIT("", PollFds[i].fd);
+				}
 			}
 		}
 	}
