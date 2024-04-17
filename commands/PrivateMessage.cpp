@@ -6,12 +6,11 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:06 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 22:34:20 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/17 18:57:28 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
-
 
 void PRIVMSGPosCommand(std::string cmd, std::string tofind, std::string &str)
 {
@@ -105,8 +104,19 @@ std::string Server::adjustOriginalString(std::string str)
 	return str;
 }
 
+std::string getMessageAfterColon(std::string input)
+{
+	size_t colonPos = input.find(':');
+	if (colonPos != std::string::npos)
+	{
+		return input.substr(colonPos + 1);
+	}
+	return "";
+}
+
 std::string Server::SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp)
 {
+	std::string message = getMessageAfterColon(cmd);
 	std::string str1 = initialSplitAndValidate(cmd, tmp);
 	if (str1.empty())
 		return std::string("");
@@ -114,7 +124,8 @@ std::string Server::SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &t
 	tmp.clear();
 	splitStringByComma(str1, tmp);
 	removeEmptyStrings(tmp);
-	return adjustOriginalString(str1);
+	
+	return message;
 }
 
 void Server::checkChannelsForClients(std::vector<std::string> &tmp, int fd)
@@ -211,6 +222,7 @@ void Server::PRIVMSG(std::string cmd, int fd)
 	if (!validateMessageAndRecipients(tmp, message, fd))
 		return;
 
-	distributeMessages(tmp, message, fd);
-}
 
+	distributeMessages(tmp, message, fd);
+
+}
