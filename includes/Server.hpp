@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 22:45:31 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/17 23:16:43 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,19 @@ public:
 	static void					SetserverRunning(bool value);
 	static bool					getServerRunning();
 
+	std::string 				modeToAppend(std::string chain, char opera, char mode);
+	void 						getCmdArgs(std::string cmd,std::string& name, std::string& modeset ,std::string &params);
+	std::vector<std::string> 	splitParams(std::string params);
+	void 						MODE(std::string& cmd, int fd);
+	std::string					inviteOnly(Channel *channel, char opera, std::string chain);
+	std::string					topicRestriction(Channel *channel ,char opera, std::string chain);
+	std::string					passwordMode(std::vector<std::string> tokens, Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string &arguments);
+	std::string					operator_privilege(std::vector<std::string> tokens, Channel *channel, size_t& pos, int fd, char opera, std::string chain, std::string& arguments);
+	bool 						isvalidLimit(std::string& limit);
+	std::string					channel_limit(std::vector<std::string> tokens,  Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string& arguments);
+
+
+	
 };
 
 #endif

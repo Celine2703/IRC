@@ -6,7 +6,7 @@
 #    By: ranki <ranki@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/14 17:51:10 by ranki             #+#    #+#              #
-#    Updated: 2024/04/16 19:23:57 by ranki            ###   ########.fr        #
+#    Updated: 2024/04/17 21:26:19 by ranki            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,6 +55,8 @@ $(CMD_DIR)Quit.cpp\
 $(CMD_DIR)Ping.cpp\
 \
 $(CMD_DIR)Invite.cpp\
+\
+$(CMD_DIR)Mode.cpp\
 \
 
 HEAD = ./includes/Channel.hpp ./includes/Replies.hpp ./includes/Client.hpp ./includes/Server.hpp

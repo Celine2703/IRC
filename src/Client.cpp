@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:18 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:21:37 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/17 23:35:05 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ Client::Client()
     channelsInvite = std::vector<std::string>();
     buffer = "";
     firstMessage = true;
+    firstMode = 0;
 }
 
 int Client::getFd()
@@ -137,4 +138,14 @@ void Client::rmChannelInvite(std::string chname)
 void Client::addChannelInvite(std::string chname)
 {
     channelsInvite.push_back(chname);
+}
+
+int Client::getFirstMode()
+{
+    return this->firstMode;
+}
+
+void Client::setFirstMode(int value)
+{
+    this->firstMode = value;
 }

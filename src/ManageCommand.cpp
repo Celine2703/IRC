@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/17 23:35:50 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,21 @@ void Server::parseCommand(std::string cmd, int fd)
 	}
 
 	std::vector<std::string> tokens = tokenizationCommand(cmd);
+
+	std::cout << "findClientByFd(fd)->getFirstMode() " << findClientByFd(fd)->getFirstMode() << std::endl;
+	std::cout << "Tokens size: " << tokens.size() << std::endl;
+	if (!tokens.empty())
+	{
+		std::cout << "First token: " << tokens[0] << std::endl;
+	}
+
+	if (tokens.size() && (tokens[0] == "MODE" || tokens[0] == "mode") && findClientByFd(fd)->getFirstMode() <= 1)
+	{
+		int newMode = findClientByFd(fd)->getFirstMode() + 1;
+		findClientByFd(fd)->setFirstMode(newMode);
+		std::cout << "not valid mode " << newMode << std::endl;
+		return;
+	}
 
 	if (tokens.size() && (tokens[0] == "PASS" || tokens[0] == "pass"))
 	{
@@ -68,6 +83,10 @@ void Server::parseCommand(std::string cmd, int fd)
 	else if (tokens.size() && (tokens[0] == "INVITE" || tokens[0] == "invite"))
 	{
 		INVITE(cmd, fd);
+	}
+	else if (tokens.size() && (tokens[0] == "MODE" || tokens[0] == "mode"))
+	{
+		MODE(cmd, fd);
 	}
 }
 

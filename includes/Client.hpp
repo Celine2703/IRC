@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:37 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:21:37 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/17 23:37:02 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ private:
 	std::vector<std::string>	channelsInvite;
 	std::string					buffer;
 	bool						firstMessage;
+	int							firstMode;
 	
 public:
 	Client();
@@ -55,8 +56,11 @@ public:
     void			setBuffer(const std::string& buffer);
 	bool			isFirstMessage();
 	void			setFirstMessage(bool value);
+	int				getFirstMode();
+	void			setFirstMode(int value);
 	std::string		getHostname();
 	std::string		getIPAddress();
+	
 };
 
 
