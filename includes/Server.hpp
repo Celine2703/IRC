@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 12:44:59 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 14:33:23 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,15 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <vector> //-> for vector
-#include <sys/socket.h> //-> for socket()
-#include <sys/types.h> //-> for socket()
-#include <netinet/in.h> //-> for sockaddr_in
-#include <fcntl.h> //-> for fcntl()
-#include <unistd.h> //-> for close()
-#include <arpa/inet.h> //-> for inet_ntoa()
-#include <poll.h> //-> for poll()
-#include <csignal> //-> for signal()
+#include <vector>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <poll.h>
+#include <csignal>
 #include <netinet/in.h>
 #include "Client.hpp"
 #include "Channel.hpp"
@@ -74,6 +74,7 @@ public:
 	void						QUIT(std::string cmd, int fd);
 	void						PING(std::string &cmd, int &fd);
 	void						INVITE(std::string &cmd, int &fd);
+	void 						MODE(std::string& cmd, int fd);
 	void						Start(std::string password, int port);
 	
 	void						ServerSocket();
@@ -112,6 +113,8 @@ public:
 	void						sendMessageToChannel(const std::string& channel, const std::string& message, int fd);
 	void						sendMessageToUser(const std::string& user, const std::string& message, int fd);
 	void						distributeMessages(const std::vector<std::string>& recipients, const std::string& message, int fd);
+	void						updateClientNickname(std::string &oldNick, std::string &newNick);
+	void 						getCmdArgs(std::string cmd,std::string& name, std::string& modeset ,std::string &params);
 	
 	static void					signalHandler(int signal);
 
@@ -124,6 +127,12 @@ public:
 	std::string					extractQuitReason(std::string cmd);
 	std::string					initialSplitAndValidate(std::string cmd, std::vector<std::string>& tmp);
 	std::string					SplitCmdPrivmsg(std::string cmd, std::vector<std::string> &tmp);
+	std::string					inviteOnly(Channel *channel, char opera, std::string chain);
+	std::string					topicRestriction(Channel *channel ,char opera, std::string chain);
+	std::string					passwordMode(std::vector<std::string> tokens, Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string &arguments);
+	std::string					operator_privilege(std::vector<std::string> tokens, Channel *channel, size_t& pos, int fd, char opera, std::string chain, std::string& arguments);
+	std::string					channel_limit(std::vector<std::string> tokens,  Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string& arguments);
+	std::string 				modeToAppend(std::string chain, char opera, char mode);
 	std::string					adjustOriginalString(std::string str);
 	
 	bool						isValidNickname(std::string& nickname);
@@ -138,6 +147,9 @@ public:
 	bool						validateCommand(const std::string& cmd, int fd);
 	bool						processPassword(Client* cli, const std::string& cmd, int fd);
 	bool						checkRegistration(Client* cli, int fd);
+	bool 						isvalidLimit(std::string& limit);
+	bool						demoteAdminToClientInChannels(std::string nick);
+	bool						promoteClientToAdminInChannels(std::string nick);
 	
 	int							tokenizationPartCommand(std::string cmd, std::vector<std::string> &tmp, std::string &reason, int fd);
 	int							getPositionColon(std::string &cmd);
@@ -146,25 +158,16 @@ public:
 
 	Channel						*findChannelByName(std::string name);
 	Channel						*validateChannel(const std::string& channelName, int fd);
+	
 	Client						*findClientByFd(int fd);
 	Client						*findClientByNick(std::string nickname);
+	
 	std::vector<std::string>	tokenizationCommand(std::string& cmd);
+	std::vector<std::string> 	splitParams(std::string params);
+
 	static void					SetserverRunning(bool value);
 	static bool					getServerRunning();
 
-	std::string 				modeToAppend(std::string chain, char opera, char mode);
-	void 						getCmdArgs(std::string cmd,std::string& name, std::string& modeset ,std::string &params);
-	std::vector<std::string> 	splitParams(std::string params);
-	void 						MODE(std::string& cmd, int fd);
-	std::string					inviteOnly(Channel *channel, char opera, std::string chain);
-	std::string					topicRestriction(Channel *channel ,char opera, std::string chain);
-	std::string					passwordMode(std::vector<std::string> tokens, Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string &arguments);
-	std::string					operator_privilege(std::vector<std::string> tokens, Channel *channel, size_t& pos, int fd, char opera, std::string chain, std::string& arguments);
-	bool 						isvalidLimit(std::string& limit);
-	std::string					channel_limit(std::vector<std::string> tokens,  Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string& arguments);
-	void						updateClientNickname(std::string &oldNick, std::string &newNick);
-	bool						promoteClientToAdminInChannels(std::string nick);
-	bool						demoteAdminToClientInChannels(std::string nick);
 
 
 
