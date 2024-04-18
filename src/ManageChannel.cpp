@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:22 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 11:52:24 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 12:49:51 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,3 +46,27 @@ void Server::updateClientNickname(std::string &oldNick, std::string &newNick)
 		}
 	}
 }
+
+bool Server::promoteClientToAdminInChannels(std::string nick)
+{
+	bool promoted = false;
+    for (std::vector<Channel>::iterator itChannel = channels.begin(); itChannel != channels.end(); ++itChannel)
+    {
+        promoted = itChannel->changeClientToAdmin(nick);
+    }
+
+	return promoted;
+}
+
+bool Server::demoteAdminToClientInChannels(std::string nick)
+{
+    bool demoted = false;
+    for (std::vector<Channel>::iterator itChannel = channels.begin(); itChannel != channels.end(); ++itChannel)
+    {
+        if (itChannel->changeAdminToClient(nick)) {
+            demoted = true;
+        }
+    }
+    return demoted;
+}
+

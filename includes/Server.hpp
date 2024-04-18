@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:50 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 11:25:17 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 12:44:59 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,8 @@ public:
 	bool 						isvalidLimit(std::string& limit);
 	std::string					channel_limit(std::vector<std::string> tokens,  Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string& arguments);
 	void						updateClientNickname(std::string &oldNick, std::string &newNick);
+	bool						promoteClientToAdminInChannels(std::string nick);
+	bool						demoteAdminToClientInChannels(std::string nick);
 
 
 

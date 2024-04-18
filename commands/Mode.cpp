@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 20:45:46 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 09:50:22 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 12:50:41 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,6 @@ void Server::MODE(std::string &cmd, int fd)
         }
     }
     std::string chain = mode_chain.str();
-    std::cout << "chain " << chain << std::endl;
     if (chain.empty())
         return;
     channel->sendToAll(RPL_CHANGEMODE(cli->getHostname(), channel->GetName(), mode_chain.str(), arguments));
@@ -216,7 +215,6 @@ bool validPassword(std::string password)
     {
         if (!std::isalnum(passwordWithOutSpace[i]) && passwordWithOutSpace[i] != '_')
         {
-            std::cout << "le false " << passwordWithOutSpace[i] << std::endl;
             return false;
         }
     }
@@ -280,9 +278,6 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
     if (tokens.size() > pos)
     {
         user = tokens[pos];
-        std::cout << "1 user " << user << std::endl;
-        std::cout << "1 all vector " << std::endl;
-        printVector(tokens);
     }
     else
     {
@@ -290,7 +285,6 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
         return param;
     }
     std::string userWithOutSpaces = removeAllNewLines(user);
-    std::cout << "1 userWithOutSpaces " << userWithOutSpaces << std::endl;
 
     if (!channel->ClientInChannel(userWithOutSpaces))
     {
@@ -299,39 +293,33 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
     }
     if (opera == '+')
     {
-        std::cout << "+" << std::endl;
-        std::cout << "chain avant " << chain << std::endl;
-        std::cout << "user avant " << user << std::endl;
         channel->setModeAtindex(3, true);
         if (channel->changeClientToAdmin(user))
         {
-            std::cout << "changeClientToAdmin oui" << std::endl;
+            this->promoteClientToAdminInChannels(user);
             param = modeToAppend(chain, opera, 'o');
             if (!arguments.empty())
                 arguments += " ";
             arguments += user;
         }
-        std::cout << "chain apres " << chain << std::endl;
     }
     else if (opera == '-')
     {
-        std::cout << "-" << std::endl;
         channel->setModeAtindex(3, false);
         if (channel->changeAdminToClient(user))
         {
+            this->demoteAdminToClientInChannels(user);
             param = modeToAppend(chain, opera, 'o');
             if (!arguments.empty())
                 arguments += " ";
             arguments += user;
         }
     }
-    std::cout << "param " << param << std::endl;
     return param;
 }
 
 bool Server::isvalidLimit(std::string &limit)
 {
-    std::cout << "limit " << limit << std::endl;
     std::string limitWithOutSpaces = removeAllNewLines(limit);
     return (!(limitWithOutSpaces.find_first_not_of("0123456789") != std::string::npos) && std::atoi(limitWithOutSpaces.c_str()) > 0);
 }
