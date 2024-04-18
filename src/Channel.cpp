@@ -6,13 +6,18 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:15 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 10:01:11 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 11:52:32 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
+
+void pri(std::string cmd)
+{
+	std::cout << cmd << std::endl;
+}
 
 // Constructeur par défaut de la classe Channel
 Channel::Channel()
@@ -93,9 +98,9 @@ bool Channel::getModeAtindex(size_t index) { return modes[index].second; }
 
 std::string removeAllNewLines3(std::string str)
 {
-    str.erase(remove(str.begin(), str.end(), '\n'), str.end());
-    str.erase(remove(str.begin(), str.end(), '\r'), str.end());
-    return str;
+	str.erase(remove(str.begin(), str.end(), '\n'), str.end());
+	str.erase(remove(str.begin(), str.end(), '\r'), str.end());
+	return str;
 }
 
 bool Channel::ClientInChannel(std::string &nick)
@@ -171,12 +176,16 @@ Client *Channel::findClientByFdInChannel(std::string name)
 	for (std::vector<Client>::iterator it = Clients.begin(); it != Clients.end(); ++it)
 	{
 		if (it->getNickname() == name)
+		{
 			return &(*it);
+		}
 	}
 	for (std::vector<Client>::iterator it = admins.begin(); it != admins.end(); ++it)
 	{
 		if (it->getNickname() == name)
+		{
 			return &(*it);
+		}
 	}
 	return NULL;
 }
@@ -246,6 +255,17 @@ bool Channel::changeAdminToClient(std::string &nick)
 	}
 	return false;
 }
+
+std::vector<Client>&	 Channel::getClients()
+{
+	return Clients;
+}
+
+std::vector<Client>&	 Channel::getAdmins()
+{
+	return admins;
+}
+
 //---------------//Methods
 //---------------//SendToAll
 void Channel::sendToAll(std::string rpl1)

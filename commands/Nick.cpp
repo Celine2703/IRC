@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:59 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 10:07:22 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 11:42:35 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,9 @@ void Server::setClientNickname(std::string cmd, int fd)
 	{
 		inuse = "*";
 		if (cli->getNickname().empty())
+		{
 			cli->setNickname(inuse);
+		}
 		sendResponse(RED + ERR_NICKINUSE(std::string(cmd)) + WHI, fd);
 		return;
 	}
@@ -74,6 +76,7 @@ void Server::setClientNickname(std::string cmd, int fd)
 		{
 			std::string oldnick = cli->getNickname();
 			cli->setNickname(cmd);
+			this->updateClientNickname(oldnick, cmd);
 			if (!oldnick.empty() && oldnick != cmd)
 			{
 				if (oldnick == "*" && !cli->getUsername().empty())

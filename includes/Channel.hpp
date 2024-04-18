@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:34 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:28:47 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 11:50:28 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,10 @@ class Channel
 		bool 						changeAdminToClient(std::string& nick);
 		void 						sendToAll(std::string rpl1);
 		void 						sendToAll(std::string rpl1, int fd);
+		std::vector<Client>&		getClients();
+		std::vector<Client>&			getAdmins();
+
+	
 		
 };
 
