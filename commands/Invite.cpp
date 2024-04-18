@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 19:12:32 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 09:40:23 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 16:20:31 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ bool Server::handleChannelLimitsAndInvitations(std::vector<std::string> &scmd, i
 
     if (findChannelByName(channelname)->GetLimit() && findChannelByName(channelname)->findClientByFdsNumber() >= findChannelByName(channelname)->GetLimit())
     {
-        senderror(473, findChannelByName(channelname)->getClientInChannelByFd(fd)->getNickname(), channelname, fd, " :Cannot invit to channel (+i)\n");
+        senderror(005, removeAllNewLines(channelname) , removeAllNewLines(findClientByFd(fd)->getNickname()), fd, " :Cannot invit to channel (+l)\n");
         return false;
     }
 
@@ -103,6 +103,6 @@ void Server::INVITE(std::string &cmd, int &fd)
     clt->addChannelInvite(scmd[2].substr(1));
     std::string rep1 = ": 341 " + findClientByFd(fd)->getNickname() + " " + clt->getNickname() + " " + scmd[2] + "\n";
     sendResponse(rep1, fd);
-    std::string rep2 = ":" + clt->getHostname() + " INVITE " + clt->getNickname() + " " + scmd[2] + "\n";
+    std::string rep2 = ":" + clt->getNickname()  + " INVITE " + clt->getHostname() + " " + scmd[2] + "\n";
     sendResponse(rep2, clt->getFd());
 }
