@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:15 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 11:52:32 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 17:30:03 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,7 @@ bool Channel::changeAdminToClient(std::string &nick)
 	size_t i = 0;
 	for (; i < admins.size(); i++)
 	{
-		if (admins[i].getNickname() == nick)
+		if (removeAllNewLines2(admins[i].getNickname()) == removeAllNewLines2(nick))
 			break;
 	}
 	if (i < admins.size())

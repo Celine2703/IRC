@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 20:45:46 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 13:00:46 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 17:32:42 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void Server::MODE(std::string &cmd, int fd)
     else if (channel)
     {
         size_t pos = 0;
+
         for (size_t i = 0; i < modeset.size(); i++)
         {
             if (modeset[i] == '+' || modeset[i] == '-')
@@ -244,6 +245,7 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
         sendResponse(ERR_NOSUCHNICK(channel->GetName(), user), fd);
         return param;
     }
+
     if (opera == '+')
     {
         channel->setModeAtindex(3, true);
@@ -261,6 +263,7 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
         channel->setModeAtindex(3, false);
         if (channel->changeAdminToClient(user))
         {
+            
             this->demoteAdminToClientInChannels(user);
             param = modeToAppend(chain, opera, 'o');
             if (!arguments.empty())
