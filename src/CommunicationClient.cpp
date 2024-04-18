@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:20 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:32:36 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 14:23:54 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void Server::receiveData(int fd)
 		std::cerr << "bytes " << bytes << "\n";
 		std::cerr << "buffer : " << buffer << "\n";
 		throw(std::runtime_error("faild to receive data \n"));
+		return ;
 	}
 	if (bytes == 0)
 	{

@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:52:08 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 22:30:07 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 14:23:07 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,5 +173,6 @@ void Server::freeClient(int fd)
     rmChannels(fd);
     removeClient(fd);
     removeFd(fd);
+    clearClients(fd);
     close(fd);
 }

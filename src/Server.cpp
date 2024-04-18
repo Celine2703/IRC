@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 11:34:43 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 14:17:54 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,15 @@ void Server::Start(std::string password, int port)
 		while (Server::getServerRunning())
 		{
 
-			if ((poll(&PollFds[0], PollFds.size(), 10) == -1) && Server::getServerRunning()) //-> wait for an event
+			if ((poll(&PollFds[0], PollFds.size(), 10) == -1) && Server::getServerRunning())
 				throw(std::runtime_error("poll() faild"));
 			if (!Server::getServerRunning())
 				break;
 			for (size_t i = 0; i < PollFds.size(); i++)
 			{
-				if (PollFds[i].revents & POLLIN) //-> check if the event is POLLIN
+				if (PollFds[i].revents & POLLIN)
 				{
-					if (PollFds[i].fd == ServerSocketFd) //-> check if the event is from the Server socket
+					if (PollFds[i].fd == ServerSocketFd)
 					{
 						acceptClient();
 					}
@@ -136,28 +136,28 @@ void Server::ServerSocket()
 	struct sockaddr_in add;
 	struct pollfd NewPoll;
 
-	add.sin_family = AF_INET;		  // set the address family to ipv4
-	add.sin_port = htons(this->Port); // convert the port to network byte order
-	add.sin_addr.s_addr = INADDR_ANY; //-> set the address to any local machine address
+	add.sin_family = AF_INET;
+	add.sin_port = htons(this->Port);
+	add.sin_addr.s_addr = INADDR_ANY;
 
-	ServerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //-> create the Server socket
-	if (ServerSocketFd == -1)						  //-> check if the socket is created
+	ServerSocketFd = socket(AF_INET, SOCK_STREAM, 0);
+	if (ServerSocketFd == -1)
 		throw(std::runtime_error("faild to create socket"));
 
 	int en = 1;
-	if (setsockopt(ServerSocketFd, SOL_SOCKET, SO_REUSEADDR, &en, sizeof(en)) == -1) //-> set the socket option (SO_REUSEADDR) to reuse the address
+	if (setsockopt(ServerSocketFd, SOL_SOCKET, SO_REUSEADDR, &en, sizeof(en)) == -1)
 		throw(std::runtime_error("faild to set option (SO_REUSEADDR) on socket"));
-	if (fcntl(ServerSocketFd, F_SETFL, O_NONBLOCK) == -1) //-> set the socket option (O_NONBLOCK) for non-blocking socket
+	if (fcntl(ServerSocketFd, F_SETFL, O_NONBLOCK) == -1)
 		throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
-	if (bind(ServerSocketFd, (struct sockaddr *)&add, sizeof(add)) == -1) //-> bind the socket to the address
+	if (bind(ServerSocketFd, (struct sockaddr *)&add, sizeof(add)) == -1)
 		throw(std::runtime_error("faild to bind socket"));
-	if (listen(ServerSocketFd, SOMAXCONN) == -1) //-> listen for incoming connections and making the socket a passive socket
+	if (listen(ServerSocketFd, SOMAXCONN) == -1)
 		throw(std::runtime_error("listen() faild"));
 
-	NewPoll.fd = ServerSocketFd; //-> add the Server socket to the pollfd
-	NewPoll.events = POLLIN;	 //-> set the event to POLLIN for reading data
-	NewPoll.revents = 0;		 //-> set the revents to 0
-	PollFds.push_back(NewPoll);	 //-> add the Server socket to the pollfd
+	NewPoll.fd = ServerSocketFd;
+	NewPoll.events = POLLIN;
+	NewPoll.revents = 0;
+	PollFds.push_back(NewPoll);
 }
 
 void Server::serverInit()

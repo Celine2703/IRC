@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 10:36:00 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 14:00:21 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void Server::parseCommand(std::string cmd, int fd)
 {
 	if (cmd.empty())
 		return;
+
+	std::cout << "Recevie => " << cmd << std::endl;
 
 	std::vector<std::string> tokens = tokenizationCommand(cmd);
 
