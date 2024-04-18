@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:00 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 16:36:20 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 20:33:10 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,15 @@ void signalHandler(int signum) {
 
 int main(int argc, char **argv)
 {
-    // if (argc != 3) {
-    //     usage();
-    //     return 1;
-    // }
-    (void)argc;
-    (void)argv;
+    if (argc != 3) {
+        usage();
+        return 1;
+    }
     std::cout << std::endl
               << GRE << "*** SERVER *** \n"
               << WHI << std::endl;
-    std::string password = "1"; // normalement donner par l'user  argv[2]
-    const char *port = "6667";  // normalement donner par l'user  argv[1]
+    std::string password = argv[2]; // normalement donner par l'user  
+    const char *port = argv[1];  // normalement donner par l'user  
     if (argc == 3)
     {
         password = argv[2];
