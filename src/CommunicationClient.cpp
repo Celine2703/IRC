@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:20 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 14:23:54 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 14:27:40 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,9 @@ void Server::receiveData(int fd)
 	int bytes = recv(fd, buffer, sizeof(buffer), 0);
 	Client *cli = findClientByFd(fd);
 	if (bytes <= -1)
-	{
-		perror("DEBUG");
-		std::cerr << "error code : " << errno << "\n";
-		std::cerr << "fd : " << fd << "\n";
-		std::cerr << "bytes " << bytes << "\n";
-		std::cerr << "buffer : " << buffer << "\n";
-		throw(std::runtime_error("faild to receive data \n"));
 		return ;
-	}
 	if (bytes == 0)
 	{
-		std::cout << "Client disconnected" << std::endl;
 		clearClients(fd);
 		close(fd);
 	}
@@ -47,24 +38,19 @@ void Server::receiveData(int fd)
 		// on recupere la sortie Client
 		cli->setBuffer((std::string)buffer);
 
-		// on regarde si c'est la fin de l'output du Client (s'il a fait ctrl + d ou enter)
 		if (cli->getBuffer().find("\n") == std::string::npos)
 			return;
 
-		// s'il a fait enter alors on va s'occuper de la commande dans sa totalité
 		std::cout << "Received in Client : " << cli->getBuffer() << std::endl;
 
-		// on va d'abord split la commandee en "/n"
 		std::istringstream iss(buffer);
 		std::string line;
 		while (std::getline(iss, line))
 		{
-			// on execute la commande
 			std::cout << "Execute commande : " << line << std::endl;
 			parseCommand(line, fd);
 		}
 
-		// laiser getClient et non la var cli car si c'est l'order Kick la var cli est null
 		if (findClientByFd(fd))
 		{
 			findClientByFd(fd)->clearBuffer();

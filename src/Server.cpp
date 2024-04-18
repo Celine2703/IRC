@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:29 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 14:17:54 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 14:27:16 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,7 @@ void Server::Start(std::string password, int port)
 					}
 					else
 					{
-						try
-						{
-							receiveData(PollFds[i].fd);
-						}
-						catch (std::runtime_error &e)
-						{
-							std::cerr << e.what() << std::endl;
-							std::cout << "Client error" << std::endl;
-						}
+						receiveData(PollFds[i].fd);
 					}
 				}
 				if (PollFds[i].revents & POLLHUP)
