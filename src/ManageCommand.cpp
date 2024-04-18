@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:26 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 10:22:05 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 10:36:00 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ void Server::parseCommand(std::string cmd, int fd)
 	if (cmd.empty())
 		return;
 
-	if (cmd == "CAP LS" && findClientByFd(fd)->isFirstMessage())
+	std::vector<std::string> tokens = tokenizationCommand(cmd);
+
+	if (tokens.size() && tokens[0] == "CAP" && findClientByFd(fd)->isFirstMessage())
 	{
 		findClientByFd(fd)->setFirstMessage(false);
 		return;
 	}
-
-	std::vector<std::string> tokens = tokenizationCommand(cmd);
 
 	if (tokens.size() && (tokens[0] != "USER") && (tokens[0] != "user") && (tokens[0] != "PASS") && (tokens[0] != "pass") && (tokens[0] != "CAP")
 			&& (tokens[0] != "NICK") && (tokens[0] != "nick") && !findClientByFd(fd)->isLogin())
@@ -32,7 +32,7 @@ void Server::parseCommand(std::string cmd, int fd)
 		return ;
 	}
 
-	if (tokens.size() && (tokens[0] == "MODE" || tokens[0] == "mode") && findClientByFd(fd)->getFirstMode() <= 1)
+	if (!findClientByFd(fd)->isFirstMessage() && tokens.size() && (tokens[0] == "MODE" || tokens[0] == "mode") && findClientByFd(fd)->getFirstMode() <= 1)
 	{
 		int newMode = findClientByFd(fd)->getFirstMode() + 1;
 		findClientByFd(fd)->setFirstMode(newMode);
