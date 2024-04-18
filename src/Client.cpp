@@ -6,11 +6,12 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:18 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/17 23:35:05 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 09:45:29 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
+#include "Server.hpp"
 
 Client::Client()
 {
@@ -113,11 +114,18 @@ std::string Client::getIPAddress()
     return this->IPAddress;
 }
 
+std::string removeAllNewLines0(std::string str)
+{
+    str.erase(remove(str.begin(), str.end(), '\n'), str.end());
+    str.erase(remove(str.begin(), str.end(), '\r'), str.end());
+    return str;
+}
+
 bool Client::getChannelInvite(std::string ChName)
 {
     for (size_t i = 0; i < this->channelsInvite.size(); i++)
     {
-        if (this->channelsInvite[i] == ChName)
+        if (removeAllNewLines0(this->channelsInvite[i]) == removeAllNewLines0(ChName))
             return true;
     }
     return false;
@@ -127,7 +135,7 @@ void Client::rmChannelInvite(std::string chname)
 {
     for (size_t i = 0; i < this->channelsInvite.size(); i++)
     {
-        if (this->channelsInvite[i] == chname)
+        if (removeAllNewLines0(this->channelsInvite[i]) == removeAllNewLines0(chname))
         {
             this->channelsInvite.erase(this->channelsInvite.begin() + i);
             return;

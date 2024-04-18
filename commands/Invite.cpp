@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 19:12:32 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 09:36:47 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 09:40:23 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,26 +33,18 @@ bool Server::checkParameters(std::vector<std::string> &scmd, int &fd)
         return false;
     }
 
-    prin("\nAVANT channelname");
-    printVector2(scmd);
     std::string channelname = scmd[2].substr(1);
-    prin("\nAPRES channelname");
-    prin(channelname);
     if (scmd[2][0] != '#' || !findChannelByName(channelname))
     {
         senderror(403, channelname, fd, " :No such channel\n");
         return false;
     }
-
-    prin("\nreturn tue checkParameters");
     return true;
 }
 
 bool Server::checkChannelMembershipAndRights(std::vector<std::string> &scmd, int &fd)
 {
     std::string channelname = scmd[2].substr(1);
-    prin("\n checkChannelMembershipAndRights AVANT ");
-    prin(channelname);
     if (!(findChannelByName(channelname)->getClientInChannelByFd(fd)) && !(findChannelByName(channelname)->getAdmin(fd)))
     {
         senderror(442, channelname, fd, " :You're not on that channel\n");
@@ -89,28 +81,18 @@ bool Server::handleChannelLimitsAndInvitations(std::vector<std::string> &scmd, i
 void Server::INVITE(std::string &cmd, int &fd)
 {
     std::vector<std::string> scmd = tokenizationCommand(cmd);
-    printVector2(scmd);
     if (!checkParameters(scmd, fd))
     {
-        prin("failed checkParameters");
         return;
     }
-    prin("after check parameter");
-    printVector2(scmd);
     if (!checkChannelMembershipAndRights(scmd, fd))
     {
-        prin("failed checkChannelMembershipAndRights");
         return;
     }
-    prin("after checkChannelMembershipAndRights");
-    printVector2(scmd);
     if (!handleChannelLimitsAndInvitations(scmd, fd))
     {
-        prin("failed handleChannelLimitsAndInvitations");
         return;
     }
-    prin("after handleChannelLimitsAndInvitations");
-    printVector2(scmd);
     Client *clt = findClientByNick(scmd[1]);
     if (!clt)
     {
@@ -118,8 +100,6 @@ void Server::INVITE(std::string &cmd, int &fd)
         return;
     }
 
-    prin("normalement c'est bon");
-    printVector2(scmd);
     clt->addChannelInvite(scmd[2].substr(1));
     std::string rep1 = ": 341 " + findClientByFd(fd)->getNickname() + " " + clt->getNickname() + " " + scmd[2] + "\n";
     sendResponse(rep1, fd);
