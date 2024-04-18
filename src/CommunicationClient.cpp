@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:20 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 14:27:40 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 17:00:11 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ void Server::receiveData(int fd)
 	char buffer[1024] = {0};
 	int bytes = recv(fd, buffer, sizeof(buffer), 0);
 	Client *cli = findClientByFd(fd);
+
 	if (bytes <= -1)
-		return ;
+		return;
 	if (bytes == 0)
 	{
 		clearClients(fd);
@@ -35,12 +36,19 @@ void Server::receiveData(int fd)
 	{
 		buffer[bytes] = '\0';
 
-		// on recupere la sortie Client
 		cli->setBuffer((std::string)buffer);
 
-		if (cli->getBuffer().find("\n") == std::string::npos)
+		if (bytes >= 1 && buffer[bytes] == '\0' && buffer[bytes - 1] != '\n')
+		{
+			cli->setBuffer("\n");
 			return;
-
+		}
+		
+		if (cli->getBuffer().find("\n") == std::string::npos)
+		{
+			return;
+		}
+		
 		std::cout << "Received in Client : " << cli->getBuffer() << std::endl;
 
 		std::istringstream iss(buffer);
