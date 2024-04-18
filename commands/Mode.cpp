@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 20:45:46 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 12:50:41 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 13:00:46 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,53 +18,6 @@ void printVector(const std::vector<std::string> &vec)
     {
         std::cout << *it << std::endl;
     }
-}
-
-std::string Server::modeToAppend(std::string chain, char opera, char mode)
-{
-    std::stringstream ss;
-
-    ss.clear();
-    char last = '\0';
-    for (size_t i = 0; i < chain.size(); i++)
-    {
-        if (chain[i] == '+' || chain[i] == '-')
-            last = chain[i];
-    }
-    if (last != opera)
-        ss << opera << mode;
-    else
-        ss << mode;
-    return ss.str();
-}
-
-void Server::getCmdArgs(std::string cmd, std::string &name, std::string &modeset, std::string &params)
-{
-    std::istringstream stm(cmd);
-    stm >> name;
-    stm >> modeset;
-    size_t found = cmd.find_first_not_of(name + modeset + " \t\v");
-    if (found != std::string::npos)
-        params = cmd.substr(found);
-}
-
-std::vector<std::string> Server::splitParams(std::string params)
-{
-    std::vector<std::string> tokens;
-    std::string param;
-
-    if (!params.empty() && params[0] == ':')
-    {
-        params.erase(0, 1);
-    }
-
-    std::istringstream stm(params);
-    while (std::getline(stm, param, ','))
-    {
-        tokens.push_back(param);
-        param.clear();
-    }
-    return tokens;
 }
 
 void    print(std::string cmd)
@@ -360,4 +313,52 @@ std::string Server::channel_limit(std::vector<std::string> tokens, Channel *chan
         param = modeToAppend(chain, opera, 'l');
     }
     return param;
+}
+
+
+std::string Server::modeToAppend(std::string chain, char opera, char mode)
+{
+    std::stringstream ss;
+
+    ss.clear();
+    char last = '\0';
+    for (size_t i = 0; i < chain.size(); i++)
+    {
+        if (chain[i] == '+' || chain[i] == '-')
+            last = chain[i];
+    }
+    if (last != opera)
+        ss << opera << mode;
+    else
+        ss << mode;
+    return ss.str();
+}
+
+void Server::getCmdArgs(std::string cmd, std::string &name, std::string &modeset, std::string &params)
+{
+    std::istringstream stm(cmd);
+    stm >> name;
+    stm >> modeset;
+    size_t found = cmd.find_first_not_of(name + modeset + " \t\v");
+    if (found != std::string::npos)
+        params = cmd.substr(found);
+}
+
+std::vector<std::string> Server::splitParams(std::string params)
+{
+    std::vector<std::string> tokens;
+    std::string param;
+
+    if (!params.empty() && params[0] == ':')
+    {
+        params.erase(0, 1);
+    }
+
+    std::istringstream stm(params);
+    while (std::getline(stm, param, ','))
+    {
+        tokens.push_back(param);
+        param.clear();
+    }
+    return tokens;
 }
