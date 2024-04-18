@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 20:45:46 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 09:44:12 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 09:50:22 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,6 @@ void Server::MODE(std::string &cmd, int fd)
     Client *cli = findClientByFd(fd);
     size_t found = cmd.find_first_not_of("MODEmode \t\v");
 
-    print("AVANT CMD");
-    print(cmd);
-    
     if (found != std::string::npos)
         cmd = cmd.substr(found - 1);
     else
@@ -108,28 +105,10 @@ void Server::MODE(std::string &cmd, int fd)
         return;
     }
 
-    print("APRES CMD");
-    print(cmd);
-
-    
-
     getCmdArgs(cmd, channelName, modeset, params);
-
-    print("APRES CMD ARGS params");
-    print(params);
 
     std::vector<std::string> tokens = removeFirstTwoAndReturnNew(tokenizationCommand(cmd));
 
-    print("vector tokens");
-    printVector(tokens);
-
-    print("\nvector my fonction");
-
-    printVector(tokenizationCommand(cmd));
-
-    print("\n");
-
-    
     if (channelName[0] != '#' || !(channel = findChannelByName(channelName.substr(1))))
     {
         sendResponse(ERR_CHANNELNOTFOUND(cli->getUsername(), channelName), fd);
@@ -262,8 +241,7 @@ std::string Server::passwordMode(std::vector<std::string> tokens, Channel *chann
         return param;
     }
 
-    printVector(tokens);
-    std::cout << "pass " << pass << std::endl;
+    
     if (!validPassword(pass))
     {
         sendResponse(ERR_INVALIDMODEPARM(channel->GetName(), std::string("(k)")), fd);

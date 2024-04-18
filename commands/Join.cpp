@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:56 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 08:59:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 09:50:05 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,6 @@ void Server::isRealChannel(std::vector<std::pair<std::string, std::string> > &to
         return;
     }
 
-    print2("REAL");
-    print2(this->channels[j].GetPassword());
-    print2("TRY");
-    print2(token[i].second);
     if (!this->channels[j].GetPassword().empty() && removeAllNewLines(this->channels[j].GetPassword()) != removeAllNewLines(token[i].second))
     {
         if (!IsInvited(findClientByFd(fd), token[i].first, 0))
