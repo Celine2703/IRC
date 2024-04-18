@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:59 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 20:18:47 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 10:07:22 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,9 @@ void Server::setClientNickname(std::string cmd, int fd)
 		else if (cli && !cli->isRegistered())
 			sendResponse(RED + ERR_NOTREGISTERED(cmd) + WHI, fd);
 	}
-	// if(cli && cli->isRegistered() && !cli->getNickname().empty() && !cli->getNickname().empty() && cli->getNickname() != "*" && !cli->GetLogedIn())
-	if (cli && cli->isRegistered() && !cli->getNickname().empty() && !cli->getNickname().empty() && cli->getNickname() != "*")
+	if (cli && cli->isRegistered() && !cli->getNickname().empty() && !cli->getNickname().empty() && cli->getNickname() != "*" && !cli->isLogin())
 	{
-		// cli->setLogedin(true);
+		cli->setLogin(true);
 		sendResponse(RPL_CONNECTED(cli->getNickname()), fd);
 	}
 }

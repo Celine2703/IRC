@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:18 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/18 09:45:29 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 10:05:27 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ Client::Client()
     buffer = "";
     firstMessage = true;
     firstMode = 0;
+    
 }
 
 int Client::getFd()
@@ -70,6 +71,16 @@ bool Client::isRegistered() const
 void Client::setRegistered(bool registered)
 {
     this->registered = registered;
+}
+
+bool Client::isLogin()
+{
+    return login;
+}
+
+void Client::setLogin(bool login)
+{
+    this->login = login;
 }
 
 const std::vector<std::string> &Client::getChannelsInvite() const

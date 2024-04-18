@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:37 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/17 23:37:02 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 10:05:37 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ public:
 	void			setFirstMessage(bool value);
 	int				getFirstMode();
 	void			setFirstMode(int value);
+	bool			isLogin();
+	void			setLogin(bool value);
 	std::string		getHostname();
 	std::string		getIPAddress();
 	
