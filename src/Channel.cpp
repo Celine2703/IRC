@@ -6,7 +6,7 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 17:51:15 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/16 21:46:48 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 00:26:39 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,19 @@ int Channel::GetLimit() { return this->limit; }
 int Channel::findClientByFdsNumber() { return this->Clients.size() + this->admins.size(); }
 bool Channel::getTopicRestriction() const { return this->isTopicRestriction; }
 bool Channel::getModeAtindex(size_t index) { return modes[index].second; }
+
+std::string removeAllNewLines3(std::string str)
+{
+    str.erase(remove(str.begin(), str.end(), '\n'), str.end());
+    str.erase(remove(str.begin(), str.end(), '\r'), str.end());
+    return str;
+}
+
 bool Channel::ClientInChannel(std::string &nick)
 {
 	for (size_t i = 0; i < Clients.size(); i++)
 	{
-		if (Clients[i].getNickname() == nick)
+		if (removeAllNewLines3(Clients[i].getNickname()) == removeAllNewLines3(nick))
 			return true;
 	}
 	for (size_t i = 0; i < admins.size(); i++)
@@ -197,12 +205,20 @@ void Channel::removeAdmin(int fd)
 		}
 	}
 }
+
+std::string removeAllNewLines2(std::string str)
+{
+	str.erase(remove(str.begin(), str.end(), '\n'), str.end());
+	str.erase(remove(str.begin(), str.end(), '\r'), str.end());
+	return str;
+}
+
 bool Channel::changeClientToAdmin(std::string &nick)
 {
 	size_t i = 0;
 	for (; i < Clients.size(); i++)
 	{
-		if (Clients[i].getNickname() == nick)
+		if (removeAllNewLines2(Clients[i].getNickname()) == removeAllNewLines2(nick))
 			break;
 	}
 	if (i < Clients.size())
@@ -263,7 +279,7 @@ void Channel::sendToAll(std::string rpl1, int fd)
 			}
 		}
 	}
-	
+
 	for (size_t i = 0; i < Clients.size(); i++)
 	{
 		if (Clients[i].getFd() != fd)

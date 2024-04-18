@@ -6,11 +6,19 @@
 /*   By: ranki <ranki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 20:45:46 by ranki             #+#    #+#             */
-/*   Updated: 2024/04/17 23:11:51 by ranki            ###   ########.fr       */
+/*   Updated: 2024/04/18 08:53:19 by ranki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
+
+void printVector(const std::vector<std::string> &vec)
+{
+    for (std::vector<std::string>::const_iterator it = vec.begin(); it != vec.end(); ++it)
+    {
+        std::cout << *it << std::endl;
+    }
+}
 
 std::string Server::modeToAppend(std::string chain, char opera, char mode)
 {
@@ -42,10 +50,14 @@ void Server::getCmdArgs(std::string cmd, std::string &name, std::string &modeset
 
 std::vector<std::string> Server::splitParams(std::string params)
 {
-    if (!params.empty() && params[0] == ':')
-        params.erase(params.begin());
     std::vector<std::string> tokens;
     std::string param;
+
+    if (!params.empty() && params[0] == ':')
+    {
+        params.erase(0, 1);
+    }
+
     std::istringstream stm(params);
     while (std::getline(stm, param, ','))
     {
@@ -53,6 +65,21 @@ std::vector<std::string> Server::splitParams(std::string params)
         param.clear();
     }
     return tokens;
+}
+
+void    print(std::string cmd)
+{
+    std::cout << cmd << std::endl;
+}
+
+std::vector<std::string> removeFirstTwoAndReturnNew(std::vector<std::string> vec)
+{
+    std::vector<std::string> newVec;
+    if (vec.size() >= 3)
+        newVec.insert(newVec.end(), vec.begin() + 2, vec.end());
+    else
+        return vec;
+    return newVec;
 }
 
 void Server::MODE(std::string &cmd, int fd)
@@ -70,15 +97,39 @@ void Server::MODE(std::string &cmd, int fd)
     Client *cli = findClientByFd(fd);
     size_t found = cmd.find_first_not_of("MODEmode \t\v");
 
+    print("AVANT CMD");
+    print(cmd);
+    
     if (found != std::string::npos)
-        cmd = cmd.substr(found);
+        cmd = cmd.substr(found - 1);
     else
     {
         sendResponse(ERR_NOTENOUGHPARAM(cli->getNickname()), fd);
         return;
     }
+
+    print("APRES CMD");
+    print(cmd);
+
+    
+
     getCmdArgs(cmd, channelName, modeset, params);
-    std::vector<std::string> tokens = splitParams(params);
+
+    print("APRES CMD ARGS params");
+    print(params);
+
+    std::vector<std::string> tokens = removeFirstTwoAndReturnNew(tokenizationCommand(cmd));
+
+    print("vector tokens");
+    printVector(tokens);
+
+    print("\nvector my fonction");
+
+    printVector(tokenizationCommand(cmd));
+
+    print("\n");
+
+    
     if (channelName[0] != '#' || !(channel = findChannelByName(channelName.substr(1))))
     {
         sendResponse(ERR_CHANNELNOTFOUND(cli->getUsername(), channelName), fd);
@@ -126,6 +177,7 @@ void Server::MODE(std::string &cmd, int fd)
         }
     }
     std::string chain = mode_chain.str();
+    std::cout << "chain " << chain << std::endl;
     if (chain.empty())
         return;
     channel->sendToAll(RPL_CHANGEMODE(cli->getHostname(), channel->GetName(), mode_chain.str(), arguments));
@@ -192,15 +244,6 @@ bool validPassword(std::string password)
     return true;
 }
 
-
-void printVector(const std::vector<std::string>& vec)
-{
-    for (std::vector<std::string>::const_iterator it = vec.begin(); it != vec.end(); ++it)
-    {
-        std::cout << *it << std::endl;
-    }
-}
-
 std::string Server::passwordMode(std::vector<std::string> tokens, Channel *channel, size_t &pos, char opera, int fd, std::string chain, std::string &arguments)
 {
     std::string param;
@@ -218,7 +261,7 @@ std::string Server::passwordMode(std::vector<std::string> tokens, Channel *chann
         sendResponse(ERR_NEEDMODEPARM(channel->GetName(), std::string("(k)")), fd);
         return param;
     }
-    
+
     printVector(tokens);
     std::cout << "pass " << pass << std::endl;
     if (!validPassword(pass))
@@ -237,7 +280,7 @@ std::string Server::passwordMode(std::vector<std::string> tokens, Channel *chann
     }
     else if (opera == '-' && channel->getModeAtindex(2))
     {
-        if (pass == channel->GetPassword())
+        if (removeAllNewLines(pass) == removeAllNewLines(channel->GetPassword()))
         {
             channel->setModeAtindex(2, false);
             channel->SetPassword("");
@@ -257,13 +300,20 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
     param.clear();
     user.clear();
     if (tokens.size() > pos)
-        user = tokens[pos++];
+    {
+        user = tokens[pos];
+        std::cout << "1 user " << user << std::endl;
+        std::cout << "1 all vector " << std::endl;
+        printVector(tokens);
+    }
     else
     {
         sendResponse(ERR_NEEDMODEPARM(channel->GetName(), "(o)"), fd);
         return param;
     }
     std::string userWithOutSpaces = removeAllNewLines(user);
+    std::cout << "1 userWithOutSpaces " << userWithOutSpaces << std::endl;
+
     if (!channel->ClientInChannel(userWithOutSpaces))
     {
         sendResponse(ERR_NOSUCHNICK(channel->GetName(), user), fd);
@@ -271,17 +321,23 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
     }
     if (opera == '+')
     {
+        std::cout << "+" << std::endl;
+        std::cout << "chain avant " << chain << std::endl;
+        std::cout << "user avant " << user << std::endl;
         channel->setModeAtindex(3, true);
         if (channel->changeClientToAdmin(user))
         {
+            std::cout << "changeClientToAdmin oui" << std::endl;
             param = modeToAppend(chain, opera, 'o');
             if (!arguments.empty())
                 arguments += " ";
             arguments += user;
         }
+        std::cout << "chain apres " << chain << std::endl;
     }
     else if (opera == '-')
     {
+        std::cout << "-" << std::endl;
         channel->setModeAtindex(3, false);
         if (channel->changeAdminToClient(user))
         {
@@ -291,6 +347,7 @@ std::string Server::operator_privilege(std::vector<std::string> tokens, Channel 
             arguments += user;
         }
     }
+    std::cout << "param " << param << std::endl;
     return param;
 }
 
